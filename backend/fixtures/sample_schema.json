@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NextFestInsightFeedbackInputSchema",
+  "description": "Standard schema for importing Steam Next Fest player feedback via CSV or JSON",
+  "type": "object",
+  "properties": {
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["content"],
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "The full text of the player feedback or review"
+          },
+          "game_title": {
+            "type": "string",
+            "description": "Name of the associated Next Fest game"
+          },
+          "source_name": {
+            "type": "string",
+            "enum": ["reddit", "x", "steam", "csv_import", "json_import", "other"],
+            "default": "csv_import"
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 publication timestamp"
+          },
+          "author": {
+            "type": "string",
+            "description": "Username or author identifier"
+          },
+          "permalink": {
+            "type": "string",
+            "format": "uri",
+            "description": "Direct canonical link to original post"
+          },
+          "raw_metrics": {
+            "type": "object",
+            "description": "Optional engagement metrics such as score, upvotes, retweets, replies"
+          }
+        }
+      }
+    }
+  }
+}

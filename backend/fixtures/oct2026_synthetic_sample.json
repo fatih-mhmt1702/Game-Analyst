@@ -1,0 +1,33 @@
+{
+  "event": "Steam Next Fest: October 2026",
+  "data_origin": "imported",
+  "comments": [
+    {
+      "game_title": "Echoes of Aethelgard",
+      "source_name": "reddit",
+      "author": "PixelWarrior",
+      "content": "The parry sound effect and visual sparks give such a crunchy game feel. Highly recommended for fans of precise action RPGs.",
+      "published_at": "2026-10-24T15:00:00Z",
+      "permalink": "https://reddit.com/r/Games/comments/json1",
+      "raw_metrics": { "score": 38, "upvotes": 40 }
+    },
+    {
+      "game_title": "Neon Vanguard",
+      "source_name": "x",
+      "author": "SynthRacer",
+      "content": "Completed a zero-damage run on the demo boss! The slide jump momentum is pure perfection. Can't wait for 2027 release.",
+      "published_at": "2026-10-24T18:20:00Z",
+      "permalink": "https://x.com/i/status/20001",
+      "raw_metrics": { "likes": 55, "retweets": 8 }
+    },
+    {
+      "game_title": "Shadows over Eldenmoor",
+      "source_name": "steam",
+      "author": "HorrorAficionado",
+      "content": "Atmosphere is 10/10, but mouse sensitivity setting resets to default every time you enter a new room. Actionable bug report submitted.",
+      "published_at": "2026-10-25T11:10:00Z",
+      "permalink": "https://steamcommunity.com/app/105/discussions/2",
+      "raw_metrics": { "votes_up": 14 }
+    }
+  ]
+}
