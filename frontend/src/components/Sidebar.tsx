@@ -6,7 +6,8 @@ import {
   TrendingUp, 
   BarChart3, 
   Lightbulb, 
-  Database 
+  Database,
+  X
 } from 'lucide-react';
 import { tr } from '../i18n/tr';
 import { en } from '../i18n/en';
@@ -15,9 +16,17 @@ interface SidebarProps {
   currentTab: string;
   onSelectTab: (tab: string) => void;
   lang: 'tr' | 'en';
+  isMobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, lang }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ 
+  currentTab, 
+  onSelectTab, 
+  lang,
+  isMobileOpen = false,
+  onCloseMobile
+}) => {
   const t = lang === 'tr' ? tr : en;
 
   const navItems = [
@@ -30,39 +39,70 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, lang 
     { id: 'data_mgmt', label: t.nav.data_mgmt, icon: Database },
   ];
 
+  const handleItemClick = (id: string) => {
+    onSelectTab(id);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
+
   return (
-    <aside className="sidebar">
-      <div className="sidebar-header">
-        <div style={{ width: 34, height: 34, borderRadius: 8, background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Gamepad2 size={20} color="#fff" />
-        </div>
-        <div>
-          <div className="brand-title">NextFest Insight</div>
-          <div className="brand-sub">Feedback Intelligence</div>
-        </div>
-      </div>
+    <>
+      {/* Mobile backdrop overlay */}
+      {isMobileOpen && (
+        <div 
+          className="sidebar-overlay" 
+          onClick={onCloseMobile}
+          aria-hidden="true"
+        />
+      )}
 
-      <ul className="nav-list">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = currentTab === item.id;
-          return (
-            <li
-              key={item.id}
-              className={`nav-item ${isActive ? 'active' : ''}`}
-              onClick={() => onSelectTab(item.id)}
+      <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header" style={{ justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Gamepad2 size={20} color="#fff" />
+            </div>
+            <div>
+              <div className="brand-title">Game Analyst</div>
+              <div className="brand-sub">Next Fest Intelligence</div>
+            </div>
+          </div>
+
+          {/* Close button visible only on mobile */}
+          {onCloseMobile && (
+            <button 
+              className="mobile-close-btn" 
+              onClick={onCloseMobile}
+              aria-label="Menüyü Kapat"
             >
-              <Icon size={18} />
-              <span>{item.label}</span>
-            </li>
-          );
-        })}
-      </ul>
+              <X size={20} />
+            </button>
+          )}
+        </div>
 
-      <div style={{ padding: '1rem', borderTop: '1px solid var(--border-color)', fontSize: '0.74rem', color: '#64748b' }}>
-        <div>v1.0.0 Desktop Windows</div>
-        <div>Steam Next Fest Analytics</div>
-      </div>
-    </aside>
+        <ul className="nav-list">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentTab === item.id;
+            return (
+              <li
+                key={item.id}
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                onClick={() => handleItemClick(item.id)}
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div style={{ padding: '1rem', borderTop: '1px solid var(--border-color)', fontSize: '0.74rem', color: '#64748b' }}>
+          <div style={{ color: '#38bdf8', fontWeight: 600 }}>v1.0.0 Web & Mobile App</div>
+          <div>Steam Next Fest Analytics</div>
+        </div>
+      </aside>
+    </>
   );
 };

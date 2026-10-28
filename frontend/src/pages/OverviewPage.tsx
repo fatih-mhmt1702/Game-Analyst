@@ -131,7 +131,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ lang }) => {
       </div>
 
       {/* Charts & Distributions */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.8rem' }}>
+      <div className="grid-2col">
         <div className="panel" style={{ marginBottom: 0 }}>
           <div className="panel-header">
             <div className="panel-title">{t.overview.sentiment_dist}</div>

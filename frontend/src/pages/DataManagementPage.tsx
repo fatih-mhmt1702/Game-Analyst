@@ -46,11 +46,8 @@ export const DataManagementPage: React.FC<DataManagementPageProps> = ({ lang }) 
 
   const loadStats = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/data/stats');
-      if (res.ok) {
-        const data = await res.json();
-        setStats(data);
-      }
+      const data = await api.getDataStats();
+      setStats(data);
     } catch (e) {
       console.error(e);
     }

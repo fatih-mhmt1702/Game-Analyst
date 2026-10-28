@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { api } from './services/api';
 import { Sidebar } from './components/Sidebar';
 import { Navbar } from './components/Navbar';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { SetupWizardModal } from './components/SetupWizardModal';
 
 import { OverviewPage } from './pages/OverviewPage';
@@ -16,17 +18,14 @@ export function App() {
   const [lang, setLang] = useState<'tr' | 'en'>('tr');
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null);
   const [isWizardOpen, setIsWizardOpen] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(true);
 
   // Check backend health periodically
   useEffect(() => {
     const check = async () => {
-      try {
-        const res = await fetch('http://127.0.0.1:8000/health');
-        setBackendHealthy(res.ok);
-      } catch {
-        setBackendHealthy(false);
-      }
+      const isHealthy = await api.checkHealth();
+      setBackendHealthy(isHealthy);
     };
     check();
     const interval = setInterval(check, 5000);
@@ -40,15 +39,23 @@ export function App() {
   const handleInspectGame = (gameId: string) => {
     setSelectedGameId(gameId);
     setCurrentTab('game_detail');
+    setIsMobileMenuOpen(false);
+  };
+
+  const handleSelectTab = (tab: string) => {
+    setCurrentTab(tab);
+    setIsMobileMenuOpen(false);
   };
 
   return (
     <div className="app-container">
-      {/* Sidebar navigation */}
+      {/* Sidebar navigation with mobile drawer support */}
       <Sidebar
         currentTab={currentTab}
-        onSelectTab={setCurrentTab}
+        onSelectTab={handleSelectTab}
         lang={lang}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
       <div className="main-content">
@@ -58,6 +65,7 @@ export function App() {
           onToggleLang={handleToggleLang}
           onOpenWizard={() => setIsWizardOpen(true)}
           backendHealthy={backendHealthy}
+          onToggleMobileMenu={() => setIsMobileMenuOpen((prev) => !prev)}
         />
 
         {/* Dynamic Page Views */}
@@ -74,6 +82,14 @@ export function App() {
         {currentTab === 'charts' && <ChartsPage lang={lang} />}
         {currentTab === 'recommendations' && <RecommendationsPage lang={lang} />}
         {currentTab === 'data_mgmt' && <DataManagementPage lang={lang} />}
+
+        {/* Mobile Bottom Navigation Bar (touch screens < 768px) */}
+        <MobileBottomNav
+          currentTab={currentTab}
+          onSelectTab={handleSelectTab}
+          onOpenMenu={() => setIsMobileMenuOpen(true)}
+          lang={lang}
+        />
       </div>
 
       {/* Setup Wizard Modal */}

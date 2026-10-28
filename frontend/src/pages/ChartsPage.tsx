@@ -111,7 +111,7 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
       </div>
 
       {/* 2. Platform Comparison (Reddit vs X vs Steam) & Volume Over Time */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.8rem' }}>
+      <div className="grid-2col">
         <div className="panel" style={{ marginBottom: 0 }}>
           <div className="panel-header">
             <div>

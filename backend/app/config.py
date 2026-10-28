@@ -12,7 +12,7 @@ else:
 
 class Settings:
     PORT: int = int(os.getenv("PORT", 8000))
-    HOST: str = os.getenv("HOST", "127.0.0.1")
+    HOST: str = os.getenv("HOST", "0.0.0.0")
     DEBUG: bool = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")
     
     # Database

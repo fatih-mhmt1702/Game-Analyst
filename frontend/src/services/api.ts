@@ -1,6 +1,29 @@
-const API_BASE = "http://127.0.0.1:8000";
+const getApiBase = (): string => {
+  if (typeof window !== 'undefined') {
+    // If explicit env var is set
+    const envUrl = (import.meta as any).env?.VITE_API_URL;
+    if (envUrl) return envUrl;
+
+    const hostname = window.location.hostname || '127.0.0.1';
+    // If served via Vite proxy or on localhost, target port 8000 on the same host/IP
+    return `http://${hostname}:8000`;
+  }
+  return 'http://127.0.0.1:8000';
+};
+
+const API_BASE = getApiBase();
 
 export const api = {
+  // Health
+  async checkHealth() {
+    try {
+      const res = await fetch(`${API_BASE}/health`);
+      return res.ok;
+    } catch {
+      return false;
+    }
+  },
+
   // Overview
   async getOverview() {
     const res = await fetch(`${API_BASE}/api/overview`);
@@ -26,6 +49,12 @@ export const api = {
     const res = await fetch(`${API_BASE}/api/games/${gameId}`);
     if (!res.ok) throw new Error("Failed to fetch game details");
     return res.json();
+  },
+
+  async syncSteam(gameId: string) {
+    const res = await fetch(`${API_BASE}/api/games/${gameId}/sync-steam`, { method: "POST" });
+    const data = await res.json();
+    return { ok: res.ok, data };
   },
 
   // Industry Macro Patterns
@@ -76,6 +105,12 @@ export const api = {
   // Data Management
   async getDataSources() {
     const res = await fetch(`${API_BASE}/api/data/sources`);
+    return res.json();
+  },
+
+  async getDataStats() {
+    const res = await fetch(`${API_BASE}/api/data/stats`);
+    if (!res.ok) throw new Error("Failed to fetch data stats");
     return res.json();
   },
 

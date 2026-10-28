@@ -81,13 +81,12 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
     try {
       setSyncingSteam(true);
       setSyncMessage(null);
-      const res = await fetch(`http://127.0.0.1:8000/api/games/${gameId}/sync-steam`, { method: 'POST' });
-      const data = await res.json();
-      if (res.ok) {
+      const { ok, data } = await api.syncSteam(gameId);
+      if (ok) {
         setSyncMessage(lang === 'tr' ? 'Steam istek listesi ve takipçi verileri başarıyla güncellendi!' : 'Steam wishlist and follower stats synchronized successfully!');
         await loadGameDetail(gameId);
       } else {
-        setSyncMessage(`Hata: ${data.detail || 'Steam bağlantısı kurulamadı'}`);
+        setSyncMessage(`Hata: ${data?.detail || 'Steam bağlantısı kurulamadı'}`);
       }
     } catch (err: any) {
       setSyncMessage(`Hata: ${err.message}`);
@@ -120,7 +119,7 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
           <div style={{ marginTop: '0.3rem' }}>
             <select
               className="input-text"
-              style={{ fontSize: '1.05rem', fontWeight: 700, padding: '0.6rem 1rem', minWidth: '340px' }}
+              style={{ fontSize: '1rem', fontWeight: 700, padding: '0.6rem 1rem', width: '100%', maxWidth: '420px' }}
               value={gameId || ''}
               onChange={(e) => onSelectGame(e.target.value)}
             >
@@ -284,7 +283,7 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
       </div>
 
       {/* Topic Breakdown and Reddit vs X comparison */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.8rem' }}>
+      <div className="grid-2col">
         {/* Topic Frequency Bar Chart with Turkish labels */}
         <div className="panel" style={{ marginBottom: 0 }}>
           <div className="panel-header">

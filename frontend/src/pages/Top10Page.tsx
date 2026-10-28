@@ -74,8 +74,8 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
         </div>
       </div>
 
-      {/* Top 10 Table */}
-      <div className="table-wrapper">
+      {/* Desktop Top 10 Table */}
+      <div className="table-wrapper desktop-table-view">
         <table className="data-table">
           <thead>
             <tr>
@@ -201,6 +201,118 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Top 10 Card View (Optimized for Phones) */}
+      <div className="mobile-card-view">
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+            {lang === 'tr' ? 'Yükleniyor...' : 'Loading Top 10 games...'}
+          </div>
+        ) : filteredGames.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+            {lang === 'tr' ? 'Aramayla eşleşen oyun bulunamadı.' : 'No games match your search query.'}
+          </div>
+        ) : (
+          filteredGames.map((game) => (
+            <div 
+              key={`m-${game.game_id}`}
+              className="panel"
+              style={{
+                marginBottom: '1rem',
+                borderLeft: game.rank === 1 ? '4px solid #38bdf8' : '4px solid var(--border-color)',
+                background: game.rank === 1 ? 'linear-gradient(135deg, #131c31 0%, #162447 100%)' : 'var(--bg-card)'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                  <span style={{
+                    fontSize: '1.2rem',
+                    fontWeight: 800,
+                    color: game.rank === 1 ? '#eab308' : game.rank === 2 ? '#cbd5e1' : game.rank === 3 ? '#d97706' : '#94a3b8',
+                    minWidth: '28px'
+                  }}>
+                    #{game.rank}
+                  </span>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>
+                      {game.title}
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                      {game.developer} &bull; <span style={{ color: '#38bdf8' }}>{game.genre}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {game.rank === 1 && (
+                  <span className="badge badge-positive" style={{ fontSize: '0.68rem' }}>
+                    #1 Zirve
+                  </span>
+                )}
+              </div>
+
+              {/* Stats Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', margin: '0.8rem 0', background: '#090d16', padding: '0.75rem', borderRadius: '8px' }}>
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>
+                    {t.top10.wishlists}
+                  </div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#38bdf8' }}>
+                    {game.wishlist_count ? game.wishlist_count.toLocaleString() : 'N/A'}
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                    {game.steam_followers ? game.steam_followers.toLocaleString() : 0} Takipçi
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ fontSize: '0.7rem', color: '#94a3b8', textTransform: 'uppercase' }}>
+                    {t.top10.peak_ccu}
+                  </div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#fff' }}>
+                    {game.peak_ccu.toLocaleString()} CCU
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: '#10b981' }}>
+                    ✓ {game.ccu_source}
+                  </div>
+                </div>
+              </div>
+
+              {/* Sentiment Bar */}
+              <div style={{ marginBottom: '0.8rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '0.25rem' }}>
+                  <span style={{ color: '#34d399', fontWeight: 600 }}>Pozitif %{game.positive_pct}</span>
+                  <span style={{ color: '#f87171', fontWeight: 600 }}>Negatif %{game.negative_pct}</span>
+                </div>
+                <div style={{ width: '100%', background: '#1e293b', height: '6px', borderRadius: '3px', overflow: 'hidden', display: 'flex' }}>
+                  <div style={{ width: `${game.positive_pct}%`, background: '#10b981' }} />
+                  <div style={{ width: `${game.mixed_pct}%`, background: '#c084fc' }} />
+                  <div style={{ width: `${game.negative_pct}%`, background: '#ef4444' }} />
+                </div>
+              </div>
+
+              {/* Praise & Complaint */}
+              <div style={{ fontSize: '0.78rem', marginBottom: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <div style={{ color: '#34d399' }}>
+                  <strong>Övgü:</strong> {tTopic(game.most_praised_feature, lang)}
+                </div>
+                <div style={{ color: '#f87171' }}>
+                  <strong>Eleştiri:</strong> {tTopic(game.most_common_complaint, lang)}
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                className="btn btn-primary"
+                style={{ width: '100%', justifyContent: 'center', padding: '0.55rem' }}
+                onClick={() => onInspectGame(game.game_id)}
+              >
+                <span>{t.top10.inspect} & Steam Verileri</span>
+                <ArrowRight size={14} />
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
