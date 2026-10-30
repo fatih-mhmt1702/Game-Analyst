@@ -3,7 +3,8 @@ import { api } from '../services/api';
 import { tr } from '../i18n/tr';
 import { en } from '../i18n/en';
 import { tTopic, tSentiment } from '../i18n/helpers';
-import { Search, Trophy, CheckCircle2, AlertTriangle, ArrowRight, Bookmark, Users } from 'lucide-react';
+import { Search, Trophy, CheckCircle2, AlertTriangle, ArrowRight, Bookmark, Users, PlusCircle } from 'lucide-react';
+import { AddGameModal } from '../components/AddGameModal';
 
 interface Top10PageProps {
   lang: 'tr' | 'en';
@@ -15,6 +16,7 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
   const [games, setGames] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     loadTop10();
@@ -58,7 +60,7 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
 
       {/* Search and Filters */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '0.8rem' }}>
-        <div style={{ position: 'relative', width: '360px' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '360px' }}>
           <Search size={16} color="#64748b" style={{ position: 'absolute', left: '12px', top: '10px' }} />
           <input
             type="text"
@@ -69,8 +71,18 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
-          {filteredGames.length} / 10 {lang === 'tr' ? 'Oyun Listeleniyor' : 'Games Listed'}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>
+            {filteredGames.length} {lang === 'tr' ? 'Oyun Listeleniyor' : 'Games Listed'}
+          </span>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            <PlusCircle size={15} />
+            <span>{lang === 'tr' ? 'Yeni Oyun Ekle' : 'Add Game'}</span>
+          </button>
         </div>
       </div>
 
@@ -314,6 +326,16 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
           ))
         )}
       </div>
+
+      <AddGameModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onGameCreated={(newGameId) => {
+          loadTop10();
+          onInspectGame(newGameId);
+        }}
+        lang={lang}
+      />
     </div>
   );
 };

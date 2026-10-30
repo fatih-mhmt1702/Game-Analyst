@@ -1,12 +1,18 @@
 const getApiBase = (): string => {
   if (typeof window !== 'undefined') {
+    // If running in packaged Electron (file:// protocol)
+    if (window.location.protocol === 'file:') {
+      return 'http://127.0.0.1:8000';
+    }
+
     // If explicit env var is set
     const envUrl = (import.meta as any).env?.VITE_API_URL;
     if (envUrl) return envUrl;
 
-    const hostname = window.location.hostname || '127.0.0.1';
-    // If served via Vite proxy or on localhost, target port 8000 on the same host/IP
-    return `http://${hostname}:8000`;
+    // In web browser (localhost, local Wi-Fi IP, Cloudflare Tunnel, Ngrok, or public domain),
+    // use relative path "" so requests go through Vite's reverse proxy (/api & /health)
+    // without CORS or Mixed-Content (HTTP on HTTPS) issues!
+    return '';
   }
   return 'http://127.0.0.1:8000';
 };
@@ -55,6 +61,65 @@ export const api = {
     const res = await fetch(`${API_BASE}/api/games/${gameId}/sync-steam`, { method: "POST" });
     const data = await res.json();
     return { ok: res.ok, data };
+  },
+
+  async createGame(payload: {
+    title: string;
+    developer?: string;
+    publisher?: string;
+    steam_app_id?: string;
+    genre?: string;
+    tags?: string[];
+    peak_ccu?: number;
+    ccu_source?: string;
+    ccu_verified?: boolean;
+    rank_order?: number | null;
+    is_top10?: boolean;
+    wishlist_count?: number;
+    wishlist_rank?: number | null;
+    steam_followers?: number;
+  }) {
+    const res = await fetch(`${API_BASE}/api/games`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.detail || "Oyun kaydedilemedi");
+    return data;
+  },
+
+  async updateGame(gameId: string, payload: {
+    title: string;
+    developer?: string;
+    publisher?: string;
+    steam_app_id?: string;
+    genre?: string;
+    tags?: string[];
+    peak_ccu?: number;
+    ccu_source?: string;
+    ccu_verified?: boolean;
+    rank_order?: number | null;
+    is_top10?: boolean;
+    wishlist_count?: number;
+    wishlist_rank?: number | null;
+    steam_followers?: number;
+  }) {
+    const res = await fetch(`${API_BASE}/api/games/${gameId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.detail || "Oyun güncellenemedi");
+    return data;
+  },
+
+  async deleteGame(gameId: string) {
+    const res = await fetch(`${API_BASE}/api/games/${gameId}`, { method: "DELETE" });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.detail || "Oyun silinemedi");
+    return data;
   },
 
   // Industry Macro Patterns
@@ -119,6 +184,17 @@ export const api = {
     return res.json();
   },
 
+  async fetchLiveFeedback(payload: { source_name: "steam" | "reddit" | "x"; game_id?: string; limit?: number }) {
+    const res = await fetch(`${API_BASE}/api/data/fetch-live`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data?.detail || "Canlı veri çekme işlemi başarısız oldu");
+    return data;
+  },
+
   async importCsv(file: File) {
     const formData = new FormData();
     formData.append("file", file);
@@ -145,6 +221,11 @@ export const api = {
 
   async getJobs() {
     const res = await fetch(`${API_BASE}/api/jobs`);
+    return res.json();
+  },
+
+  async cancelJob(jobId: string) {
+    const res = await fetch(`${API_BASE}/api/jobs/${jobId}/cancel`, { method: "POST" });
     return res.json();
   },
 

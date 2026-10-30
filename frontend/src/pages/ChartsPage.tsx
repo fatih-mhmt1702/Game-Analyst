@@ -82,7 +82,9 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
           {t.nav.charts}
         </h1>
         <p style={{ color: '#94a3b8', fontSize: '0.92rem', marginTop: '0.3rem' }}>
-          Tüm metrikler gerçek veritabanı kayıtlarından filtrelenmiştir. Her grafik net sayılara ve açıklamalara dayanır.
+          {lang === 'tr'
+            ? 'Tüm metrikler gerçek veritabanı kayıtlarından filtrelenmiştir. Her grafik net sayılara ve açıklamalara dayanır.'
+            : 'All metrics are computed directly from normalized database records with explicit counts and denominators.'}
         </p>
       </div>
 
@@ -90,21 +92,21 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
       <div className="panel">
         <div className="panel-header">
           <div>
-            <div className="panel-title">Oyun Bazında Pozitif vs Negatif Duygu Dağılımı</div>
-            <div className="panel-desc">En çok geri bildirim toplanan oyunların duygu kutupsallığı</div>
+            <div className="panel-title">{t.charts.sentiment_by_game}</div>
+            <div className="panel-desc">{t.charts.sentiment_by_game_desc}</div>
           </div>
         </div>
         <div style={{ height: 320 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={sentimentByGame} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
               <XAxis dataKey="title" stroke="#64748b" angle={-25} textAnchor="end" interval={0} tick={{ fontSize: 11 }} />
-              <YAxis stroke="#64748b" label={{ value: 'Yorum Sayısı', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
+              <YAxis stroke="#64748b" label={{ value: lang === 'tr' ? 'Yorum Sayısı' : 'Comments', angle: -90, position: 'insideLeft', fill: '#64748b' }} />
               <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }} />
               <Legend verticalAlign="top" height={36} />
-              <Bar dataKey="positive" name="Pozitif" stackId="a" fill="#10b981" />
-              <Bar dataKey="mixed" name="Karmaşık" stackId="a" fill="#c084fc" />
-              <Bar dataKey="negative" name="Negatif" stackId="a" fill="#ef4444" />
-              <Bar dataKey="neutral" name="Nötr" stackId="a" fill="#64748b" />
+              <Bar dataKey="positive" name={t.charts.positive} stackId="a" fill="#10b981" />
+              <Bar dataKey="mixed" name={t.charts.mixed} stackId="a" fill="#c084fc" />
+              <Bar dataKey="negative" name={t.charts.negative} stackId="a" fill="#ef4444" />
+              <Bar dataKey="neutral" name={t.charts.neutral} stackId="a" fill="#64748b" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -115,8 +117,8 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
         <div className="panel" style={{ marginBottom: 0 }}>
           <div className="panel-header">
             <div>
-              <div className="panel-title">Reddit vs X vs Steam Duygu Kıyaslaması</div>
-              <div className="panel-desc">Platformların oyuncu duyarlılık profili</div>
+              <div className="panel-title">{t.charts.platform_comparison}</div>
+              <div className="panel-desc">{t.charts.platform_comparison_desc}</div>
             </div>
           </div>
           <div style={{ height: 280 }}>
@@ -126,9 +128,9 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
                 <YAxis stroke="#64748b" />
                 <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }} />
                 <Legend />
-                <Bar dataKey="Positive" fill="#10b981" name="Pozitif" />
-                <Bar dataKey="Negative" fill="#ef4444" name="Negatif" />
-                <Bar dataKey="Mixed" fill="#c084fc" name="Karmaşık" />
+                <Bar dataKey="Positive" fill="#10b981" name={t.charts.positive} />
+                <Bar dataKey="Negative" fill="#ef4444" name={t.charts.negative} />
+                <Bar dataKey="Mixed" fill="#c084fc" name={t.charts.mixed} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -137,8 +139,8 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
         <div className="panel" style={{ marginBottom: 0 }}>
           <div className="panel-header">
             <div>
-              <div className="panel-title">Günlük Geri Bildirim Hacmi</div>
-              <div className="panel-desc">Etkinlik boyunca paylaşımların zamansal akışı</div>
+              <div className="panel-title">{t.charts.volume_over_time}</div>
+              <div className="panel-desc">{t.charts.volume_over_time_desc}</div>
             </div>
           </div>
           <div style={{ height: 280 }}>
@@ -148,7 +150,7 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
                 <YAxis stroke="#64748b" />
                 <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }} />
                 <Legend />
-                <Line type="monotone" dataKey="total" name="Toplam Hacim" stroke="#38bdf8" strokeWidth={2} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="total" name={t.charts.total_volume} stroke="#38bdf8" strokeWidth={2} dot={{ r: 4 }} />
                 <Line type="monotone" dataKey="reddit" name="Reddit" stroke="#ff4500" strokeWidth={1.5} />
                 <Line type="monotone" dataKey="x" name="X" stroke="#1da1f2" strokeWidth={1.5} />
               </LineChart>
@@ -163,9 +165,9 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
           <div>
             <div className="panel-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
               <ShieldAlert size={20} />
-              Kritik ve Majör Problem Dağılımı (Ciddiyet Derecesine Göre)
+              {t.charts.severity_breakdown}
             </div>
-            <div className="panel-desc">Çökme, kilitlenme, kontrol arızası ve ağır performans problemleri</div>
+            <div className="panel-desc">{t.charts.severity_breakdown_desc}</div>
           </div>
         </div>
         <div style={{ height: 300 }}>
@@ -175,9 +177,9 @@ export const ChartsPage: React.FC<ChartsPageProps> = ({ lang }) => {
               <YAxis stroke="#64748b" />
               <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }} />
               <Legend verticalAlign="top" />
-              <Bar dataKey="critical" name="Kritik (Çökme / Save Kaybı)" fill="#ef4444" stackId="sev" />
-              <Bar dataKey="major" name="Majör (Takılma / Kontrol Arızası)" fill="#f59e0b" stackId="sev" />
-              <Bar dataKey="moderate" name="Orta (UI / Balans / Denge)" fill="#38bdf8" stackId="sev" />
+              <Bar dataKey="critical" name={t.charts.critical} fill="#ef4444" stackId="sev" />
+              <Bar dataKey="major" name={t.charts.major} fill="#f59e0b" stackId="sev" />
+              <Bar dataKey="moderate" name={t.charts.moderate} fill="#38bdf8" stackId="sev" />
             </BarChart>
           </ResponsiveContainer>
         </div>

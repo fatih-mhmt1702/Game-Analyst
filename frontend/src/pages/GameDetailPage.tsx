@@ -13,8 +13,13 @@ import {
   Users, 
   TrendingUp, 
   RefreshCw, 
-  Layers 
+  Layers,
+  PlusCircle,
+  DownloadCloud,
+  Edit3,
+  Trash2
 } from 'lucide-react';
+import { AddGameModal } from '../components/AddGameModal';
 import { 
   BarChart, 
   Bar, 
@@ -36,7 +41,10 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
   const [detail, setDetail] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [syncingSteam, setSyncingSteam] = useState(false);
+  const [fetchingReviews, setFetchingReviews] = useState(false);
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [editingGame, setEditingGame] = useState<any | null>(null);
 
   // Filters for comments table
   const [filterSentiment, setFilterSentiment] = useState<string>('ALL');
@@ -95,6 +103,26 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
     }
   };
 
+  const handleFetchLiveReviews = async () => {
+    if (!gameId) return;
+    try {
+      setFetchingReviews(true);
+      setSyncMessage(null);
+      const res = await api.fetchLiveFeedback({ source_name: 'steam', game_id: gameId, limit: 25 });
+      const inserted = res.result?.inserted ?? 0;
+      setSyncMessage(
+        inserted > 0
+          ? (lang === 'tr' ? `Steam üzerinden ${inserted} yeni oyuncu incelemesi çekildi ve sınıflandırıldı!` : `Fetched and classified ${inserted} live Steam reviews!`)
+          : (res.message || (lang === 'tr' ? 'Sorgulama tamamlandı (yeni açık inceleme bulunamadı).' : 'Query completed (no new public reviews found).'))
+      );
+      await loadGameDetail(gameId);
+    } catch (err: any) {
+      setSyncMessage(`Hata: ${err.message}`);
+    } finally {
+      setFetchingReviews(false);
+    }
+  };
+
   if (!detail && loading) {
     return <div style={{ padding: '2rem', color: '#94a3b8' }}>{lang === 'tr' ? 'Yükleniyor...' : 'Loading game analytics...'}</div>;
   }
@@ -116,7 +144,7 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
           <label style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
             {t.game_detail.select_game}
           </label>
-          <div style={{ marginTop: '0.3rem' }}>
+          <div style={{ marginTop: '0.3rem', display: 'flex', gap: '0.6rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <select
               className="input-text"
               style={{ fontSize: '1rem', fontWeight: 700, padding: '0.6rem 1rem', width: '100%', maxWidth: '420px' }}
@@ -129,6 +157,50 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
                 </option>
               ))}
             </select>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => {
+                setEditingGame(null);
+                setIsAddModalOpen(true);
+              }}
+            >
+              <PlusCircle size={15} />
+              <span>{lang === 'tr' ? 'Yeni Oyun Ekle' : 'Add Game'}</span>
+            </button>
+            {game && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  setEditingGame(game);
+                  setIsAddModalOpen(true);
+                }}
+              >
+                <Edit3 size={15} />
+                <span>{lang === 'tr' ? 'Düzenle' : 'Edit'}</span>
+              </button>
+            )}
+            {game && !String(game.id).startsWith('game_snf_') && (
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={async () => {
+                  if (!window.confirm(lang === 'tr' ? `"${game.title}" oyununu silmek istediğinize emin misiniz?` : `Delete "${game.title}"?`)) {
+                    return;
+                  }
+                  await api.deleteGame(game.id);
+                  const updated = await api.getGames();
+                  setGamesList(updated);
+                  if (updated.length > 0) {
+                    onSelectGame(updated[0].id);
+                  }
+                }}
+              >
+                <Trash2 size={15} />
+                <span>{lang === 'tr' ? 'Sil' : 'Delete'}</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -176,15 +248,33 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
               </div>
             </div>
 
-            <button
-              className="btn btn-primary"
-              disabled={syncingSteam}
-              onClick={handleSyncSteam}
-              style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem' }}
-            >
-              <RefreshCw size={14} className={syncingSteam ? 'animate-spin' : ''} />
-              <span>{syncingSteam ? t.game_detail.syncing : t.game_detail.sync_steam_btn}</span>
-            </button>
+            <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+              <button
+                className="btn btn-secondary"
+                disabled={fetchingReviews}
+                onClick={handleFetchLiveReviews}
+                style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem' }}
+                type="button"
+              >
+                <DownloadCloud size={14} className={fetchingReviews ? 'animate-spin' : ''} />
+                <span>
+                  {fetchingReviews
+                    ? (lang === 'tr' ? 'İncelemeler Çekiliyor...' : 'Fetching Reviews...')
+                    : (lang === 'tr' ? 'Steam Yorumlarını Canlı Çek' : 'Fetch Live Steam Reviews')}
+                </span>
+              </button>
+
+              <button
+                className="btn btn-primary"
+                disabled={syncingSteam}
+                onClick={handleSyncSteam}
+                style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem' }}
+                type="button"
+              >
+                <RefreshCw size={14} className={syncingSteam ? 'animate-spin' : ''} />
+                <span>{syncingSteam ? t.game_detail.syncing : t.game_detail.sync_steam_btn}</span>
+              </button>
+            </div>
           </div>
 
           {syncMessage && (
@@ -232,13 +322,13 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
 
             <div style={{ background: '#0b1120', padding: '1rem', borderRadius: '8px', border: '1px solid #1e3a8a' }}>
               <div style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: 600, textTransform: 'uppercase' }}>
-                Etkinlik Dönüşümü (Tahmini)
+                {lang === 'tr' ? 'Etkinlik Dönüşümü (Tahmini)' : 'Festival Gain (Est.)'}
               </div>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#10b981', marginTop: '0.2rem' }}>
-                +64,500
+                +{Math.round((game.wishlist_count || 120000) * 0.157).toLocaleString()}
               </div>
               <div style={{ fontSize: '0.74rem', color: '#34d399', marginTop: '0.2rem' }}>
-                Next Fest Sırasında Kazanılan Wishlist
+                {lang === 'tr' ? 'Next Fest Sırasında Kazanılan Wishlist' : 'Wishlists Gained During Next Fest'}
               </div>
             </div>
           </div>
@@ -248,13 +338,13 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
       {/* Game Metric Cards */}
       <div className="grid-cards">
         <div className="metric-card">
-          <div className="label">Toplam Toplanan Yorum</div>
+          <div className="label">{lang === 'tr' ? 'Toplam Toplanan Yorum' : 'Collected Comments'}</div>
           <div className="value">{detail?.collected_comments_count ?? 0}</div>
           <div className="sub">{game?.genre} &bull; {game?.developer}</div>
         </div>
 
         <div className="metric-card">
-          <div className="label">Pozitif Oran</div>
+          <div className="label">{lang === 'tr' ? 'Pozitif Oran' : 'Positive Ratio'}</div>
           <div className="value" style={{ color: '#10b981' }}>
             %{detail?.sentiment_percentages?.Positive ?? 0}
           </div>
@@ -264,7 +354,7 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
         </div>
 
         <div className="metric-card">
-          <div className="label">Negatif Eleştiri Oranı</div>
+          <div className="label">{lang === 'tr' ? 'Negatif Eleştiri Oranı' : 'Negative Critique Ratio'}</div>
           <div className="value" style={{ color: '#ef4444' }}>
             %{detail?.sentiment_percentages?.Negative ?? 0}
           </div>
@@ -274,11 +364,11 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
         </div>
 
         <div className="metric-card">
-          <div className="label">Kritik / Majör Hata</div>
+          <div className="label">{lang === 'tr' ? 'Kritik / Majör Hata' : 'Critical / Major Bugs'}</div>
           <div className="value" style={{ color: '#f59e0b' }}>
             {detail?.critical_bugs_and_usability?.length ?? 0}
           </div>
-          <div className="sub">Çökme, softlock veya kontrol arızası</div>
+          <div className="sub">{lang === 'tr' ? 'Çökme, softlock veya kontrol arızası' : 'Crashes, softlocks, or control failures'}</div>
         </div>
       </div>
 
@@ -496,6 +586,24 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
           </table>
         </div>
       </div>
+
+      <AddGameModal
+        isOpen={isAddModalOpen}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingGame(null);
+        }}
+        initialGame={editingGame}
+        onGameCreated={async (savedGameId) => {
+          await loadGamesList();
+          if (savedGameId === gameId) {
+            await loadGameDetail(savedGameId);
+          } else {
+            onSelectGame(savedGameId);
+          }
+        }}
+        lang={lang}
+      />
     </div>
   );
 };

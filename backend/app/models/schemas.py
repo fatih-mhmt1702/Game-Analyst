@@ -69,19 +69,32 @@ class GameModel(BaseModel):
     ccu_verified: bool = False
     rank_order: Optional[int] = None
     is_top10: bool = False
+    wishlist_count: int = 0
+    wishlist_rank: Optional[int] = None
+    steam_followers: int = 0
+    wishlist_source: Optional[str] = None
 
 class GameCreateRequest(BaseModel):
     title: str
     developer: Optional[str] = None
     publisher: Optional[str] = None
     steam_app_id: Optional[str] = None
-    genre: Optional[str] = None
+    genre: Optional[str] = "Indie"
     tags: List[str] = Field(default_factory=list)
     peak_ccu: int = 0
     ccu_source: Optional[str] = "Manual entry"
     ccu_verified: bool = False
     rank_order: Optional[int] = None
     is_top10: bool = False
+    wishlist_count: int = 0
+    wishlist_rank: Optional[int] = None
+    steam_followers: int = 0
+    wishlist_source: Optional[str] = "Manual / Steam Follower Model"
+
+class LiveFetchRequest(BaseModel):
+    source_name: Literal["steam", "reddit", "x"] = "steam"
+    game_id: Optional[str] = None
+    limit: int = Field(default=25, ge=5, le=100)
 
 class TopicItem(BaseModel):
     topic: str

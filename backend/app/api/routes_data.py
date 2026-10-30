@@ -9,6 +9,7 @@ from ..connectors.x_connector import XConnector
 from ..connectors.steam_connector import SteamConnector
 from ..connectors.importer import FileImporter
 from ..pipeline.processing_engine import ProcessingEngine
+from ..models.schemas import LiveFetchRequest
 from ..config import settings
 
 router = APIRouter(prefix="/api/data", tags=["Data Management"])
@@ -62,6 +63,96 @@ def test_connection(source_name: str):
         """, (1 if result.get("is_configured") else 0, result.get("status"), result.get("message"), source_name))
 
     return result
+
+@router.post("/fetch-live")
+def fetch_live_feedback(req: LiveFetchRequest):
+    """
+    Triggers live feedback ingestion from an authorized public API (Steam, Reddit, or X)
+    for either a selected game or top tracked games.
+    """
+    source = req.source_name
+    if source == "reddit":
+        connector = RedditConnector(
+            client_id=settings.REDDIT_CLIENT_ID,
+            client_secret=settings.REDDIT_CLIENT_SECRET,
+            user_agent=settings.REDDIT_USER_AGENT
+        )
+    elif source == "x":
+        connector = XConnector(bearer_token=settings.X_BEARER_TOKEN)
+        if not connector.is_configured():
+            raise HTTPException(
+                status_code=400,
+                detail="X (Twitter) API anahtarı (.env içinde X_BEARER_TOKEN) tanımlı değil."
+            )
+    elif source == "steam":
+        connector = SteamConnector(api_key=settings.STEAM_WEB_API_KEY)
+    else:
+        raise HTTPException(status_code=400, detail=f"Unsupported live source: {source}")
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        if req.game_id and req.game_id != "ALL":
+            cur.execute("SELECT id, title, steam_app_id FROM games WHERE id = ?", (req.game_id,))
+            target_games = [dict(r) for r in cur.fetchall()]
+        else:
+            cur.execute("SELECT id, title, steam_app_id FROM games ORDER BY is_top10 DESC, rank_order ASC LIMIT 5")
+            target_games = [dict(r) for r in cur.fetchall()]
+
+    if not target_games:
+        raise HTTPException(status_code=404, detail="Hedef oyun bulunamadı.")
+
+    collected_records: List[Dict[str, Any]] = []
+    per_game_limit = max(5, req.limit // max(len(target_games), 1)) if len(target_games) > 1 else req.limit
+
+    for g in target_games:
+        query_val = (g.get("steam_app_id") or g["title"]) if source == "steam" else g["title"]
+        try:
+            items = connector.fetch_feedback(query=query_val, limit=per_game_limit)
+            # If game title yielded no specific results on Reddit, fallback to festival discussions
+            if not items and source == "reddit":
+                items = connector.fetch_feedback(query=f"{g['title']} demo", limit=per_game_limit)
+                if not items:
+                    items = connector.fetch_feedback(query="Steam Next Fest demo", limit=per_game_limit)
+
+            for item in items:
+                item["game_id"] = g["id"]
+                item["game_title"] = g["title"]
+                item["association_method"] = f"live_{source}_api"
+                collected_records.append(item)
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"Canlı veri çekme hatası ({g['title']}): {str(e)}")
+
+    job_id = f"job_{source}_{uuid.uuid4().hex[:8]}"
+    with get_db_connection() as conn:
+        conn.execute("""
+            INSERT INTO collection_jobs (id, source_name, status, total_items, processed_items, current_step)
+            VALUES (?, ?, 'idle', ?, 0, ?)
+        """, (job_id, source, len(collected_records), f"Live {source.upper()} fetch initialized"))
+
+    if not collected_records:
+        with get_db_connection() as conn:
+            conn.execute("""
+                UPDATE collection_jobs
+                SET status = 'completed', progress_pct = 100.0, current_step = 'Finished (0 public reviews returned)', finished_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            """, (job_id,))
+        return {
+            "job_id": job_id,
+            "message": f"{source.upper()} kaynağından sorgulandı ancak bu oyun(lar) için henüz kamuya açık yeni inceleme bulunamadı.",
+            "result": {"status": "completed", "total": 0, "inserted": 0, "duplicates": 0, "spam": 0}
+        }
+
+    res = processing_engine.process_records(
+        job_id=job_id,
+        records=collected_records,
+        source_name=source,
+        data_origin="actual"
+    )
+    return {
+        "job_id": job_id,
+        "message": f"{source.upper()} üzerinden canlı geri bildirimler başarıyla çekildi ve sınıflandırıldı.",
+        "result": res
+    }
 
 @router.post("/import/csv")
 async def import_csv_file(file: UploadFile = File(...)):

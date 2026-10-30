@@ -46,6 +46,7 @@ def list_games(search: Optional[str] = None):
                 "title": r["title"],
                 "developer": r["developer"],
                 "publisher": r["publisher"],
+                "steam_app_id": r["steam_app_id"],
                 "genre": r["genre"],
                 "tags": tags,
                 "peak_ccu": r["peak_ccu"],
@@ -53,6 +54,10 @@ def list_games(search: Optional[str] = None):
                 "ccu_verified": bool(r["ccu_verified"]),
                 "rank_order": r["rank_order"],
                 "is_top10": bool(r["is_top10"]),
+                "wishlist_count": r["wishlist_count"] or 0,
+                "wishlist_rank": r["wishlist_rank"],
+                "steam_followers": r["steam_followers"] or 0,
+                "wishlist_source": r["wishlist_source"],
                 "comments_count": r["comments_count"]
             })
         return result
@@ -78,15 +83,25 @@ def sync_game_steam(game_id: str):
     """
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT steam_app_id, title FROM games WHERE id = ?", (game_id,))
+        cursor.execute(
+            "SELECT steam_app_id, title, steam_followers, peak_ccu, wishlist_rank FROM games WHERE id = ?",
+            (game_id,)
+        )
         game = cursor.fetchone()
         if not game:
             raise HTTPException(status_code=404, detail="Game not found")
         
-        app_id = game["steam_app_id"] or ("2849100" if game["title"] == "Echoes of Aethelgard" else "2910240")
         from ..connectors.steam_connector import SteamConnector
         steam_conn = SteamConnector(api_key=settings.STEAM_WEB_API_KEY)
-        stats = steam_conn.fetch_steam_wishlist_and_stats(app_id)
+        app_id = game["steam_app_id"] or steam_conn._resolve_app_id(game["title"]) or "2849100"
+
+        stats = steam_conn.fetch_steam_wishlist_and_stats(
+            app_id=app_id,
+            fallback_followers=game["steam_followers"] or 0,
+            fallback_ccu=game["peak_ccu"] or 0,
+            fallback_rank=game["wishlist_rank"],
+            fallback_title=game["title"]
+        )
 
         if stats.get("success"):
             conn.execute("""
@@ -115,22 +130,101 @@ def sync_game_steam(game_id: str):
 @router.post("")
 def create_game(req: GameCreateRequest):
     game_id = f"game_{uuid.uuid4().hex[:8]}"
+    followers = req.steam_followers
+    if followers <= 0 and req.peak_ccu > 0:
+        followers = int(req.peak_ccu * 0.89)
+    wishlists = req.wishlist_count
+    if wishlists <= 0 and followers > 0:
+        wishlists = int(followers * 9.6)
+
     with get_db_connection() as conn:
         conn.execute("""
-            INSERT INTO games (id, event_id, title, developer, publisher, steam_app_id, genre, tags, peak_ccu, ccu_source, ccu_verified, rank_order, is_top10)
-            VALUES (?, 'snf_oct_2026', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO games (
+                id, event_id, title, developer, publisher, steam_app_id, genre, tags,
+                peak_ccu, ccu_source, ccu_verified, rank_order, is_top10,
+                wishlist_count, wishlist_rank, steam_followers, wishlist_source
+            )
+            VALUES (?, 'snf_oct_2026', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             game_id,
-            req.title,
-            req.developer,
-            req.publisher,
-            req.steam_app_id,
-            req.genre,
+            req.title.strip(),
+            req.developer or "Indie Studio",
+            req.publisher or "Self-Published",
+            req.steam_app_id or "",
+            req.genre or "Indie",
             json.dumps(req.tags),
             req.peak_ccu,
-            req.ccu_source,
+            req.ccu_source or "Manual entry",
             1 if req.ccu_verified else 0,
             req.rank_order,
-            1 if req.is_top10 else 0
+            1 if req.is_top10 else 0,
+            wishlists,
+            req.wishlist_rank,
+            followers,
+            req.wishlist_source or "Steam Takipçi Modeli (9.6x)"
         ))
     return {"id": game_id, "message": "Game registered successfully"}
+
+@router.put("/{game_id}")
+def update_game(game_id: str, req: GameCreateRequest):
+    followers = req.steam_followers
+    if followers <= 0 and req.peak_ccu > 0:
+        followers = int(req.peak_ccu * 0.89)
+    wishlists = req.wishlist_count
+    if wishlists <= 0 and followers > 0:
+        wishlists = int(followers * 9.6)
+
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM games WHERE id = ?", (game_id,))
+        if not cur.fetchone():
+            raise HTTPException(status_code=404, detail="Game not found")
+
+        conn.execute("""
+            UPDATE games
+            SET title = ?,
+                developer = ?,
+                publisher = ?,
+                steam_app_id = ?,
+                genre = ?,
+                tags = ?,
+                peak_ccu = ?,
+                ccu_source = ?,
+                ccu_verified = ?,
+                rank_order = ?,
+                is_top10 = ?,
+                wishlist_count = ?,
+                wishlist_rank = ?,
+                steam_followers = ?,
+                wishlist_source = ?
+            WHERE id = ?
+        """, (
+            req.title.strip(),
+            req.developer or "Indie Studio",
+            req.publisher or "Self-Published",
+            req.steam_app_id or "",
+            req.genre or "Indie",
+            json.dumps(req.tags),
+            req.peak_ccu,
+            req.ccu_source or "Manual entry",
+            1 if req.ccu_verified else 0,
+            req.rank_order,
+            1 if req.is_top10 else 0,
+            wishlists,
+            req.wishlist_rank,
+            followers,
+            req.wishlist_source or "Steam Takipçi Modeli (9.6x)",
+            game_id
+        ))
+    return {"id": game_id, "message": "Game updated successfully"}
+
+@router.delete("/{game_id}")
+def delete_game(game_id: str):
+    with get_db_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM games WHERE id = ?", (game_id,))
+        if not cur.fetchone():
+            raise HTTPException(status_code=404, detail="Game not found")
+        conn.execute("DELETE FROM game_comment_associations WHERE game_id = ?", (game_id,))
+        conn.execute("DELETE FROM games WHERE id = ?", (game_id,))
+    return {"id": game_id, "message": "Game deleted successfully"}

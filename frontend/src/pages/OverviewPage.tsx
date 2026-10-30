@@ -200,7 +200,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ lang }) => {
       </div>
 
       {/* Top Praises and Complaints side-by-side */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.8rem' }}>
+      <div className="grid-2col">
         <div className="panel" style={{ marginBottom: 0 }}>
           <div className="panel-header">
             <div className="panel-title" style={{ color: '#34d399', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
