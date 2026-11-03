@@ -54,9 +54,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
         {/* Backend health status badge */}
-        <div className="health-status-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: backendHealthy ? '#34d399' : '#f87171' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: backendHealthy ? '#10b981' : '#ef4444', display: 'inline-block', flexShrink: 0 }}></span>
-          <span className="health-text">
+        <div className="health-status-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.78rem', color: backendHealthy ? '#34d399' : '#f87171', background: 'rgba(13, 21, 39, 0.6)', padding: '0.3rem 0.65rem', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.15)' }}>
+          <span className={`pulse-dot ${backendHealthy ? 'pulse-dot-green' : 'pulse-dot-red'}`}></span>
+          <span className="health-text" style={{ fontWeight: 600 }}>
             {backendHealthy ? (lang === 'tr' ? 'API Aktif' : 'API Online') : (lang === 'tr' ? 'Bağlanıyor' : 'Offline')}
           </span>
         </div>
