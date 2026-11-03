@@ -338,13 +338,23 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
       {/* Game Metric Cards */}
       <div className="grid-cards">
         <div className="metric-card">
-          <div className="label">{lang === 'tr' ? 'Toplam Toplanan Yorum' : 'Collected Comments'}</div>
+          <div className="metric-card-header">
+            <div className="label">{lang === 'tr' ? 'Toplam Toplanan Yorum' : 'Collected Comments'}</div>
+            <div className="metric-icon-box metric-icon-blue">
+              <Layers size={16} />
+            </div>
+          </div>
           <div className="value">{detail?.collected_comments_count ?? 0}</div>
           <div className="sub">{game?.genre} &bull; {game?.developer}</div>
         </div>
 
         <div className="metric-card">
-          <div className="label">{lang === 'tr' ? 'Pozitif Oran' : 'Positive Ratio'}</div>
+          <div className="metric-card-header">
+            <div className="label">{lang === 'tr' ? 'Pozitif Oran' : 'Positive Ratio'}</div>
+            <div className="metric-icon-box metric-icon-green">
+              <TrendingUp size={16} />
+            </div>
+          </div>
           <div className="value" style={{ color: '#10b981' }}>
             %{detail?.sentiment_percentages?.Positive ?? 0}
           </div>
@@ -354,7 +364,12 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
         </div>
 
         <div className="metric-card">
-          <div className="label">{lang === 'tr' ? 'Negatif Eleştiri Oranı' : 'Negative Critique Ratio'}</div>
+          <div className="metric-card-header">
+            <div className="label">{lang === 'tr' ? 'Negatif Eleştiri Oranı' : 'Negative Critique Ratio'}</div>
+            <div className="metric-icon-box metric-icon-red">
+              <AlertOctagon size={16} />
+            </div>
+          </div>
           <div className="value" style={{ color: '#ef4444' }}>
             %{detail?.sentiment_percentages?.Negative ?? 0}
           </div>
@@ -364,7 +379,12 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
         </div>
 
         <div className="metric-card">
-          <div className="label">{lang === 'tr' ? 'Kritik / Majör Hata' : 'Critical / Major Bugs'}</div>
+          <div className="metric-card-header">
+            <div className="label">{lang === 'tr' ? 'Kritik / Majör Hata' : 'Critical / Major Bugs'}</div>
+            <div className="metric-icon-box metric-icon-cyan">
+              <Gamepad2 size={16} />
+            </div>
+          </div>
           <div className="value" style={{ color: '#f59e0b' }}>
             {detail?.critical_bugs_and_usability?.length ?? 0}
           </div>

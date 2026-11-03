@@ -12,7 +12,9 @@ import {
   FileCode,
   DownloadCloud,
   History,
-  XCircle
+  XCircle,
+  ShieldCheck,
+  Filter
 } from 'lucide-react';
 
 interface DataManagementPageProps {
@@ -198,19 +200,34 @@ export const DataManagementPage: React.FC<DataManagementPageProps> = ({ lang }) 
       {stats && (
         <div className="grid-cards">
           <div className="metric-card">
-            <div className="label">{t.data_mgmt.total_records}</div>
+            <div className="metric-card-header">
+              <div className="label">{t.data_mgmt.total_records}</div>
+              <div className="metric-icon-box metric-icon-blue">
+                <Database size={16} />
+              </div>
+            </div>
             <div className="value">{stats.total_records}</div>
             <div className="sub">
               Actual: {stats.data_origins?.actual || 0} &bull; Imported: {stats.data_origins?.imported || 0} &bull; Sample: {stats.data_origins?.sample || 0}
             </div>
           </div>
           <div className="metric-card">
-            <div className="label">{t.data_mgmt.blocked_duplicates}</div>
+            <div className="metric-card-header">
+              <div className="label">{t.data_mgmt.blocked_duplicates}</div>
+              <div className="metric-icon-box metric-icon-cyan">
+                <ShieldCheck size={16} />
+              </div>
+            </div>
             <div className="value" style={{ color: '#fbbf24' }}>{stats.duplicate_records}</div>
             <div className="sub">SHA-256 / Simhash ile tekilleştirildi</div>
           </div>
           <div className="metric-card">
-            <div className="label">{t.data_mgmt.filtered_spam}</div>
+            <div className="metric-card-header">
+              <div className="label">{t.data_mgmt.filtered_spam}</div>
+              <div className="metric-icon-box metric-icon-red">
+                <Filter size={16} />
+              </div>
+            </div>
             <div className="value" style={{ color: '#f87171' }}>{stats.spam_or_irrelevant}</div>
             <div className="sub">Tanıtım linkleri ve boş yorumlar</div>
           </div>

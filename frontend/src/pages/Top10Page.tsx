@@ -119,11 +119,7 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
               filteredGames.map((game) => (
                 <tr key={game.game_id} style={{ background: game.rank === 1 ? 'rgba(56, 189, 248, 0.04)' : 'transparent' }}>
                   <td>
-                    <span style={{ 
-                      fontSize: '1rem', 
-                      fontWeight: 800, 
-                      color: game.rank === 1 ? '#eab308' : game.rank === 2 ? '#cbd5e1' : game.rank === 3 ? '#d97706' : '#94a3b8' 
-                    }}>
+                    <span className={`rank-badge ${game.rank === 1 ? 'rank-badge-1' : game.rank === 2 ? 'rank-badge-2' : game.rank === 3 ? 'rank-badge-3' : 'rank-badge-default'}`}>
                       #{game.rank}
                     </span>
                   </td>
@@ -229,25 +225,15 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
           filteredGames.map((game) => (
             <div 
               key={`m-${game.game_id}`}
-              className="panel"
-              style={{
-                marginBottom: '1rem',
-                borderLeft: game.rank === 1 ? '4px solid #38bdf8' : '4px solid var(--border-color)',
-                background: game.rank === 1 ? 'linear-gradient(135deg, #131c31 0%, #162447 100%)' : 'var(--bg-card)'
-              }}
+              className={`panel uiverse-game-card ${game.rank === 1 ? 'uiverse-game-card-top' : ''}`}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                  <span style={{
-                    fontSize: '1.2rem',
-                    fontWeight: 800,
-                    color: game.rank === 1 ? '#eab308' : game.rank === 2 ? '#cbd5e1' : game.rank === 3 ? '#d97706' : '#94a3b8',
-                    minWidth: '28px'
-                  }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span className={`rank-badge ${game.rank === 1 ? 'rank-badge-1' : game.rank === 2 ? 'rank-badge-2' : game.rank === 3 ? 'rank-badge-3' : 'rank-badge-default'}`}>
                     #{game.rank}
                   </span>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '1rem', color: '#fff' }}>
+                    <div style={{ fontWeight: 700, fontSize: '1.05rem', color: '#fff' }}>
                       {game.title}
                     </div>
                     <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>

@@ -92,23 +92,13 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ lang }) => {
       {/* Top Metric Cards */}
       <div className="grid-cards">
         <div className="metric-card">
-          <div className="metric-card-header">
-            <div className="label">{t.overview.total_games}</div>
-            <div className="metric-icon-box metric-icon-blue">
-              <Gamepad2 size={16} />
-            </div>
-          </div>
+          <div className="label">{t.overview.total_games}</div>
           <div className="value">{data?.total_games_analyzed ?? 0}</div>
           <div className="sub">{data?.event_name}</div>
         </div>
 
         <div className="metric-card">
-          <div className="metric-card-header">
-            <div className="label">{t.overview.total_comments}</div>
-            <div className="metric-icon-box metric-icon-cyan">
-              <MessageSquare size={16} />
-            </div>
-          </div>
+          <div className="label">{t.overview.total_comments}</div>
           <div className="value" style={{ color: '#38bdf8' }}>
             {data?.total_relevant_comments?.toLocaleString() ?? 0}
           </div>
@@ -116,12 +106,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ lang }) => {
         </div>
 
         <div className="metric-card">
-          <div className="metric-card-header">
-            <div className="label">Pozitif Geri Bildirim</div>
-            <div className="metric-icon-box metric-icon-green">
-              <ThumbsUp size={16} />
-            </div>
-          </div>
+          <div className="label">Pozitif Geri Bildirim</div>
           <div className="value" style={{ color: '#10b981' }}>
             {data?.sentiment_distribution?.Positive ?? 0}
           </div>
@@ -133,12 +118,7 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ lang }) => {
         </div>
 
         <div className="metric-card">
-          <div className="metric-card-header">
-            <div className="label">Negatif Eleştiri</div>
-            <div className="metric-icon-box metric-icon-red">
-              <ThumbsDown size={16} />
-            </div>
-          </div>
+          <div className="label">Negatif Eleştiri</div>
           <div className="value" style={{ color: '#ef4444' }}>
             {data?.sentiment_distribution?.Negative ?? 0}
           </div>
