@@ -22,3 +22,4 @@ echo.
 echo Kapatmak istediginizde 'durdur.bat' dosyasini calistirabilirsiniz.
 echo ========================================================
 pause
+

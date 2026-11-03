@@ -12,3 +12,4 @@ echo [OK] Sunucu ve internet baglantisi basariyla kapatildi.
 echo      Bilgisayarinizda hicbir servis calismiyor.
 echo ========================================================
 pause
+

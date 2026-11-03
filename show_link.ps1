@@ -1,4 +1,4 @@
-$line = (docker logs game_analyst_tunnel 2>&1 | Select-String -Pattern "https://[a-zA-Z0-9-]+\.trycloudflare\.com" | Select-Object -First 1)
+$line = (docker logs game_analyst_tunnel 2>&1 | Select-String -Pattern "https://[a-zA-Z0-9-]+\.trycloudflare\.com" | Select-Object -Last 1)
 if ($line) {
     $match = [regex]::Match($line.Line, "https://[a-zA-Z0-9-]+\.trycloudflare\.com")
     $url = $match.Value
