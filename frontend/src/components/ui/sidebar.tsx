@@ -1,6 +1,6 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, memo, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Links {
@@ -48,9 +48,9 @@ export const SidebarProvider = ({
   const open = openProp !== undefined ? openProp : openState;
   const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
 
-  const toggleSidebar = () => {
+  const toggleSidebar = useCallback(() => {
     setOpen((prev) => !prev);
-  };
+  }, [setOpen]);
 
   return (
     <SidebarContext.Provider value={{ open, setOpen, animate, toggleSidebar }}>
@@ -96,17 +96,17 @@ export const DesktopSidebar = ({
 }: Omit<React.ComponentProps<typeof motion.div>, "children"> & { children?: React.ReactNode }) => {
   const { open, setOpen, animate } = useSidebar();
   return (
-    <motion.div
+    <motion.aside
       className={cn(
-        "h-full py-3.5 hidden md:flex md:flex-col bg-[rgba(9,15,29,0.95)] backdrop-blur-2xl border-r border-[rgba(56,189,248,0.12)] flex-shrink-0 z-30 transition-all duration-300 relative select-none",
-        open ? "px-3 w-[250px]" : "px-2 w-[64px]",
+        "h-full py-3.5 hidden md:flex md:flex-col bg-[rgba(9,15,29,0.95)] backdrop-blur-xl border-r border-[rgba(56,189,248,0.12)] flex-shrink-0 z-30 relative select-none",
+        open ? "px-3 w-[240px]" : "px-3 w-[72px]",
         className
       )}
       animate={{
-        width: animate ? (open ? "250px" : "64px") : "250px",
+        width: animate ? (open ? "240px" : "72px") : "240px",
       }}
       transition={{
-        duration: 0.22,
+        duration: 0.18,
         ease: [0.16, 1, 0.3, 1],
       }}
       onMouseEnter={() => setOpen(true)}
@@ -114,7 +114,7 @@ export const DesktopSidebar = ({
       {...props}
     >
       {children}
-    </motion.div>
+    </motion.aside>
   );
 };
 
@@ -132,7 +132,7 @@ export const MobileSidebar = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.18 }}
             className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[990] md:hidden"
             onClick={() => setOpen(false)}
             aria-hidden="true"
@@ -142,22 +142,23 @@ export const MobileSidebar = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "-100%", opacity: 0 }}
             transition={{
-              duration: 0.28,
+              duration: 0.22,
               ease: [0.16, 1, 0.3, 1],
             }}
             className={cn(
-              "fixed h-full w-[85vw] max-w-[300px] inset-y-0 left-0 bg-[rgba(9,15,29,0.98)] backdrop-blur-2xl p-5 z-[1000] flex flex-col justify-between border-r border-[rgba(56,189,248,0.2)] shadow-2xl shadow-black md:hidden",
+              "fixed h-full w-[85vw] max-w-[280px] inset-y-0 left-0 bg-[rgba(9,15,29,0.98)] backdrop-blur-2xl p-4 z-[1000] flex flex-col justify-between border-r border-[rgba(56,189,248,0.2)] shadow-2xl shadow-black md:hidden",
               className
             )}
             {...props}
           >
-            <div
-              className="absolute right-4 top-4 z-50 text-slate-400 hover:text-white cursor-pointer p-2 rounded-lg hover:bg-slate-800/60 transition-colors"
+            <button
+              type="button"
+              className="absolute right-3.5 top-3.5 z-50 text-slate-400 hover:text-white cursor-pointer p-1.5 rounded-lg hover:bg-slate-800/60 transition-colors"
               onClick={() => setOpen(false)}
               aria-label="Menüyü Kapat"
             >
               <X className="size-5" />
-            </div>
+            </button>
             {children}
           </motion.div>
         </>
@@ -166,7 +167,7 @@ export const MobileSidebar = ({
   );
 };
 
-export const SidebarLink = ({
+export const SidebarLink = memo(({
   link,
   className,
   ...props
@@ -174,7 +175,7 @@ export const SidebarLink = ({
   link: Links;
   className?: string;
 }) => {
-  const { open, animate, setOpen } = useSidebar();
+  const { open, setOpen } = useSidebar();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -192,22 +193,20 @@ export const SidebarLink = ({
       <button
         type="button"
         onClick={handleClick}
-        title={!open ? link.label : undefined}
         className={cn(
-          "h-10 w-full rounded-xl transition-all duration-150 outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
+          "h-[46px] w-full rounded-xl transition-all duration-[180ms] outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
           open 
-            ? "px-2.5 justify-start gap-2.5" 
-            : "px-1 justify-center",
+            ? "px-3 justify-start gap-[12px]" 
+            : "px-0 justify-center",
           link.isActive
-            ? (open
-                ? "bg-gradient-to-r from-sky-500/18 via-sky-500/8 to-transparent text-white font-bold border-l-2 border-sky-400 shadow-[inset_0_0_12px_rgba(56,189,248,0.12)]"
-                : "bg-sky-500/20 text-sky-400 font-bold border border-sky-400/40 shadow-[0_0_12px_rgba(56,189,248,0.22)]")
-            : "text-slate-400 hover:text-white hover:bg-slate-800/50 active:scale-95",
+            ? "border-l-2 border-[#38bdf8] bg-sky-500/10 text-sky-400 font-medium shadow-[inset_0_0_12px_rgba(56,189,248,0.08)]"
+            : "border-l-2 border-transparent text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 active:bg-slate-800/60",
           className
         )}
         {...props}
       >
-        <div className="size-7 flex items-center justify-center flex-shrink-0">
+        {/* Fixed 22px icon slot */}
+        <div className="w-[22px] h-[22px] flex items-center justify-center flex-shrink-0 transition-colors duration-[180ms]">
           {link.icon}
         </div>
         
@@ -215,17 +214,17 @@ export const SidebarLink = ({
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ opacity: 0, x: -6 }}
+              initial={{ opacity: 0, x: -4 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -6 }}
-              transition={{ duration: 0.16 }}
-              className="flex flex-col min-w-0 flex-1 text-left overflow-hidden ml-1"
+              exit={{ opacity: 0, x: -4 }}
+              transition={{ duration: 0.14 }}
+              className="flex flex-col min-w-0 flex-1 text-left overflow-hidden"
             >
-              <span className="text-sm tracking-tight whitespace-nowrap overflow-hidden text-ellipsis font-semibold text-slate-100">
+              <span className="text-[14px] leading-tight tracking-tight whitespace-nowrap overflow-hidden text-ellipsis font-medium text-slate-100">
                 {link.label}
               </span>
               {link.description && (
-                <span className="text-[11px] text-slate-400 font-normal whitespace-nowrap overflow-hidden text-ellipsis leading-tight">
+                <span className="text-[11px] text-slate-400/90 font-normal whitespace-nowrap overflow-hidden text-ellipsis leading-tight mt-0.5">
                   {link.description}
                 </span>
               )}
@@ -236,8 +235,10 @@ export const SidebarLink = ({
         {/* Expanded badge */}
         {link.badge && open && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={{ duration: 0.14 }}
             className="ml-auto flex-shrink-0"
           >
             {link.badge}
@@ -248,7 +249,7 @@ export const SidebarLink = ({
       {/* Floating tooltip when collapsed on desktop */}
       {!open && (
         <div className="hidden md:group-hover/tooltip:flex pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 z-[100] items-center">
-          <div className="bg-slate-900/95 text-slate-100 text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-700/80 shadow-2xl whitespace-nowrap backdrop-blur-md flex items-center gap-1.5">
+          <div className="bg-slate-900/95 text-slate-100 text-[13px] font-medium px-2.5 py-1.5 rounded-lg border border-slate-700/80 shadow-xl whitespace-nowrap backdrop-blur-md flex items-center gap-2">
             <span>{link.label}</span>
             {link.badge}
           </div>
@@ -256,4 +257,6 @@ export const SidebarLink = ({
       )}
     </div>
   );
-};
+});
+
+SidebarLink.displayName = "SidebarLink";

@@ -1,7 +1,11 @@
-import React from 'react';
-import { Menu } from 'lucide-react';
-import { tr } from '../i18n/tr';
-import { en } from '../i18n/en';
+import React, { memo } from 'react';
+import { 
+  Menu,
+  Grid2X2,
+  Trophy,
+  Crosshair,
+  Sparkles
+} from 'lucide-react';
 
 interface MobileBottomNavProps {
   currentTab: string;
@@ -10,17 +14,57 @@ interface MobileBottomNavProps {
   lang: 'tr' | 'en';
 }
 
-export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
+export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
   currentTab,
   onSelectTab,
   onOpenMenu,
   lang,
 }) => {
   const items = [
-    { id: 'overview', label: lang === 'tr' ? 'Özet' : 'Overview', iconImg: '/icons/overview.png' },
-    { id: 'top10', label: 'Top 10', iconImg: '/icons/top10.png' },
-    { id: 'game_detail', label: lang === 'tr' ? 'Oyunlar' : 'Games', iconImg: '/icons/game_detail.png' },
-    { id: 'recommendations', label: lang === 'tr' ? 'Öneriler' : 'Advice', iconImg: '/icons/recommendations.png' },
+    { 
+      id: 'overview', 
+      label: lang === 'tr' ? 'Özet' : 'Overview', 
+      icon: (isActive: boolean) => (
+        <Grid2X2 
+          size={20} 
+          strokeWidth={1.8} 
+          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+        />
+      )
+    },
+    { 
+      id: 'top10', 
+      label: 'Top 10', 
+      icon: (isActive: boolean) => (
+        <Trophy 
+          size={20} 
+          strokeWidth={1.8} 
+          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+        />
+      )
+    },
+    { 
+      id: 'game_detail', 
+      label: lang === 'tr' ? 'Oyunlar' : 'Games', 
+      icon: (isActive: boolean) => (
+        <Crosshair 
+          size={20} 
+          strokeWidth={1.8} 
+          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+        />
+      )
+    },
+    { 
+      id: 'recommendations', 
+      label: lang === 'tr' ? 'Öneriler' : 'Advice', 
+      icon: (isActive: boolean) => (
+        <Sparkles 
+          size={20} 
+          strokeWidth={1.8} 
+          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+        />
+      )
+    },
   ];
 
   return (
@@ -34,11 +78,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             onClick={() => onSelectTab(item.id)}
             type="button"
           >
-            <img 
-              src={item.iconImg} 
-              alt={item.label} 
-              className={`size-[19px] object-contain transition-transform ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'opacity-75'}`} 
-            />
+            {item.icon(isActive)}
             <span>{item.label}</span>
           </button>
         );
@@ -50,9 +90,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
         type="button"
         title={lang === 'tr' ? 'Daha Fazla Menü' : 'More Menu'}
       >
-        <Menu size={20} />
+        <Menu size={20} strokeWidth={1.8} className="text-slate-400" />
         <span>{lang === 'tr' ? 'Menü' : 'Menu'}</span>
       </button>
     </nav>
   );
-};
+});
+
+MobileBottomNav.displayName = 'MobileBottomNav';
