@@ -53,11 +53,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-        {/* Backend health status badge */}
-        <div className="health-status-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: backendHealthy ? '#34d399' : '#f87171' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: backendHealthy ? '#10b981' : '#ef4444', display: 'inline-block', flexShrink: 0 }}></span>
-          <span className="health-text">
-            {backendHealthy ? (lang === 'tr' ? 'API Aktif' : 'API Online') : (lang === 'tr' ? 'Bağlanıyor' : 'Offline')}
+        {/* Backend health status badge - Styled exactly like the Status Indicator design */}
+        <div className={`status-pill ${backendHealthy ? 'status-pill-online' : 'status-pill-offline'}`}>
+          <span className="status-pill-dot" />
+          <span>
+            {backendHealthy 
+              ? (lang === 'tr' ? 'Çevrimiçi' : 'Online') 
+              : (lang === 'tr' ? 'Çevrimdışı' : 'Offline')}
           </span>
         </div>
 

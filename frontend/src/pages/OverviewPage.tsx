@@ -10,7 +10,9 @@ import {
   ThumbsUp, 
   ThumbsDown, 
   Clock, 
-  AlertCircle 
+  AlertCircle,
+  TrendingUp,
+  TrendingDown
 } from 'lucide-react';
 import { 
   PieChart, 
@@ -89,43 +91,121 @@ export const OverviewPage: React.FC<OverviewPageProps> = ({ lang }) => {
         </div>
       )}
 
-      {/* Top Metric Cards */}
+      {/* Top Metric Cards - Refined Uiverse Gaming Cards */}
       <div className="grid-cards">
-        <div className="metric-card">
-          <div className="label">{t.overview.total_games}</div>
-          <div className="value">{data?.total_games_analyzed ?? 0}</div>
-          <div className="sub">{data?.event_name}</div>
+        {/* Toplam Oyun: Blue */}
+        <div className="metric-card metric-card-blue">
+          <div className="metric-card-header">
+            <div className="label">{t.overview.total_games}</div>
+            <div className="metric-icon-refined metric-icon-blue">
+              <Gamepad2 size={15} />
+            </div>
+          </div>
+          <div className="metric-val">{data?.total_games_analyzed ?? 0}</div>
+          <div className="sub">{data?.event_name || 'Steam Next Fest October 2026'}</div>
+          <div className="metric-trend-footer">
+            <span>{lang === 'tr' ? 'Etkinlik Kapsamı' : 'Event Scope'}</span>
+            <span style={{ color: '#38bdf8', fontWeight: 600 }}>100% {lang === 'tr' ? 'Demosu Aktif' : 'Active Demos'}</span>
+          </div>
+          <div className="metric-trend-bar">
+            <div className="metric-trend-fill" style={{ width: '100%', background: '#38bdf8' }} />
+          </div>
         </div>
 
-        <div className="metric-card">
-          <div className="label">{t.overview.total_comments}</div>
-          <div className="value" style={{ color: '#38bdf8' }}>
-            {data?.total_relevant_comments?.toLocaleString() ?? 0}
+        {/* Toplam Kayıt / Yorum: Cyan */}
+        <div className="metric-card metric-card-cyan">
+          <div className="metric-card-header">
+            <div className="label">{t.overview.total_comments}</div>
+            <div className="metric-icon-refined metric-icon-cyan">
+              <MessageSquare size={15} />
+            </div>
           </div>
+          <div className="metric-val">{data?.total_relevant_comments?.toLocaleString() ?? 0}</div>
           <div className="sub">{data?.unique_discussions_count ?? 0} {t.overview.unique_discussions}</div>
-        </div>
-
-        <div className="metric-card">
-          <div className="label">Pozitif Geri Bildirim</div>
-          <div className="value" style={{ color: '#10b981' }}>
-            {data?.sentiment_distribution?.Positive ?? 0}
+          <div className="metric-trend-footer">
+            <span>{lang === 'tr' ? 'Topluluk Tartışmaları' : 'Discussions'}</span>
+            <span style={{ color: '#22d3ee', fontWeight: 600 }}>
+              {data?.unique_discussions_count ? `${data.unique_discussions_count} ${lang === 'tr' ? 'başlık' : 'threads'}` : 'Steam/Reddit/X'}
+            </span>
           </div>
-          <div className="sub">
-            {data?.total_relevant_comments > 0
-              ? `%${Math.round(((data.sentiment_distribution?.Positive || 0) / data.total_relevant_comments) * 100)} (${data.sentiment_distribution?.Positive || 0} / ${data.total_relevant_comments} Yorum)`
-              : 'Veri yok'}
+          <div className="metric-trend-bar">
+            <div className="metric-trend-fill" style={{ width: '100%', background: '#06b6d4' }} />
           </div>
         </div>
 
-        <div className="metric-card">
-          <div className="label">Negatif Eleştiri</div>
-          <div className="value" style={{ color: '#ef4444' }}>
-            {data?.sentiment_distribution?.Negative ?? 0}
+        {/* Pozitif Duygu: Yeşil */}
+        <div className="metric-card metric-card-green">
+          <div className="metric-card-header">
+            <div className="label">{lang === 'tr' ? 'Pozitif Duygu' : 'Positive Sentiment'}</div>
+            <div className="metric-icon-refined metric-icon-green">
+              <ThumbsUp size={15} />
+            </div>
+          </div>
+          <div className="metric-val">
+            {data?.total_relevant_comments > 0
+              ? `%${Math.round(((data.sentiment_distribution?.Positive || 0) / data.total_relevant_comments) * 100)}`
+              : '0%'}
           </div>
           <div className="sub">
+            {data?.sentiment_distribution?.Positive ?? 0} / {data?.total_relevant_comments ?? 0} {lang === 'tr' ? 'Yorum' : 'Comments'}
+          </div>
+          <div className="metric-trend-footer">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+              <TrendingUp size={12} color="#34d399" />
+              <span>{lang === 'tr' ? 'Oyuncu Onayı' : 'Player Praise'}</span>
+            </span>
+            <span style={{ color: '#34d399', fontWeight: 600 }}>
+              {data?.total_relevant_comments > 0
+                ? `${Math.round(((data.sentiment_distribution?.Positive || 0) / data.total_relevant_comments) * 100)}%`
+                : 'N/A'}
+            </span>
+          </div>
+          <div className="metric-trend-bar">
+            <div 
+              className="metric-trend-fill" 
+              style={{ 
+                width: `${data?.total_relevant_comments > 0 ? Math.round(((data.sentiment_distribution?.Positive || 0) / data.total_relevant_comments) * 100) : 0}%`, 
+                background: '#10b981' 
+              }} 
+            />
+          </div>
+        </div>
+
+        {/* Negatif Duygu: Kırmızı */}
+        <div className="metric-card metric-card-red">
+          <div className="metric-card-header">
+            <div className="label">{lang === 'tr' ? 'Negatif Duygu' : 'Negative Sentiment'}</div>
+            <div className="metric-icon-refined metric-icon-red">
+              <ThumbsDown size={15} />
+            </div>
+          </div>
+          <div className="metric-val">
             {data?.total_relevant_comments > 0
-              ? `%${Math.round(((data.sentiment_distribution?.Negative || 0) / data.total_relevant_comments) * 100)} (${data.sentiment_distribution?.Negative || 0} / ${data.total_relevant_comments} Yorum)`
-              : 'Veri yok'}
+              ? `%${Math.round(((data.sentiment_distribution?.Negative || 0) / data.total_relevant_comments) * 100)}`
+              : '0%'}
+          </div>
+          <div className="sub">
+            {data?.sentiment_distribution?.Negative ?? 0} / {data?.total_relevant_comments ?? 0} {lang === 'tr' ? 'Eleştiri' : 'Critiques'}
+          </div>
+          <div className="metric-trend-footer">
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+              <TrendingDown size={12} color="#f87171" />
+              <span>{lang === 'tr' ? 'Hata & Şikayet' : 'Issues & Bugs'}</span>
+            </span>
+            <span style={{ color: '#f87171', fontWeight: 600 }}>
+              {data?.total_relevant_comments > 0
+                ? `${Math.round(((data.sentiment_distribution?.Negative || 0) / data.total_relevant_comments) * 100)}%`
+                : 'N/A'}
+            </span>
+          </div>
+          <div className="metric-trend-bar">
+            <div 
+              className="metric-trend-fill" 
+              style={{ 
+                width: `${data?.total_relevant_comments > 0 ? Math.round(((data.sentiment_distribution?.Negative || 0) / data.total_relevant_comments) * 100) : 0}%`, 
+                background: '#ef4444' 
+              }} 
+            />
           </div>
         </div>
       </div>

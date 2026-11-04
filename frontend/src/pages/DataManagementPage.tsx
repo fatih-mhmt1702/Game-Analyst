@@ -199,37 +199,81 @@ export const DataManagementPage: React.FC<DataManagementPageProps> = ({ lang }) 
       {/* Database Hygiene Statistics */}
       {stats && (
         <div className="grid-cards">
-          <div className="metric-card">
+          {/* Toplam Kayıt: Cyan */}
+          <div className="metric-card metric-card-cyan">
             <div className="metric-card-header">
               <div className="label">{t.data_mgmt.total_records}</div>
-              <div className="metric-icon-box metric-icon-blue">
-                <Database size={16} />
+              <div className="metric-icon-refined metric-icon-cyan">
+                <Database size={15} />
               </div>
             </div>
-            <div className="value">{stats.total_records}</div>
+            <div className="metric-val">{stats.total_records?.toLocaleString()}</div>
             <div className="sub">
               Actual: {stats.data_origins?.actual || 0} &bull; Imported: {stats.data_origins?.imported || 0} &bull; Sample: {stats.data_origins?.sample || 0}
             </div>
+            <div className="metric-trend-footer">
+              <span>{lang === 'tr' ? 'Aktif Veritabanı' : 'Active Database'}</span>
+              <span style={{ color: '#22d3ee', fontWeight: 600 }}>100% {lang === 'tr' ? 'İşlendi' : 'Parsed'}</span>
+            </div>
+            <div className="metric-trend-bar">
+              <div className="metric-trend-fill" style={{ width: '100%', background: '#06b6d4' }} />
+            </div>
           </div>
-          <div className="metric-card">
+
+          {/* Engellenen Kopyalar: Amber */}
+          <div className="metric-card metric-card-amber">
             <div className="metric-card-header">
               <div className="label">{t.data_mgmt.blocked_duplicates}</div>
-              <div className="metric-icon-box metric-icon-cyan">
-                <ShieldCheck size={16} />
+              <div className="metric-icon-refined metric-icon-amber">
+                <ShieldCheck size={15} />
               </div>
             </div>
-            <div className="value" style={{ color: '#fbbf24' }}>{stats.duplicate_records}</div>
+            <div className="metric-val">{stats.duplicate_records?.toLocaleString()}</div>
             <div className="sub">SHA-256 / Simhash ile tekilleştirildi</div>
+            <div className="metric-trend-footer">
+              <span>{lang === 'tr' ? 'Tekilleştirme Oranı' : 'Deduplication'}</span>
+              <span style={{ color: '#fbbf24', fontWeight: 600 }}>
+                {stats.total_records > 0 
+                  ? `%${((stats.duplicate_records / (stats.total_records + stats.duplicate_records)) * 100).toFixed(1)}`
+                  : '%0'}
+              </span>
+            </div>
+            <div className="metric-trend-bar">
+              <div 
+                className="metric-trend-fill" 
+                style={{ 
+                  width: `${Math.min(100, Math.round(((stats.duplicate_records || 0) / Math.max(1, (stats.total_records || 1))) * 100))}%`, 
+                  background: '#f59e0b' 
+                }} 
+              />
+            </div>
           </div>
-          <div className="metric-card">
+
+          {/* Spam / Bot: Kırmızı */}
+          <div className="metric-card metric-card-red">
             <div className="metric-card-header">
               <div className="label">{t.data_mgmt.filtered_spam}</div>
-              <div className="metric-icon-box metric-icon-red">
-                <Filter size={16} />
+              <div className="metric-icon-refined metric-icon-red">
+                <Filter size={15} />
               </div>
             </div>
-            <div className="value" style={{ color: '#f87171' }}>{stats.spam_or_irrelevant}</div>
-            <div className="sub">Tanıtım linkleri ve boş yorumlar</div>
+            <div className="metric-val">{stats.spam_or_irrelevant?.toLocaleString()}</div>
+            <div className="sub">Tanıtım linkleri ve boş yorumlar elendi</div>
+            <div className="metric-trend-footer">
+              <span>{lang === 'tr' ? 'Filtrelenen Gürültü' : 'Filtered Noise'}</span>
+              <span style={{ color: '#f87171', fontWeight: 600 }}>
+                {stats.spam_or_irrelevant > 0 ? `${stats.spam_or_irrelevant} ${lang === 'tr' ? 'öğe' : 'items'}` : (lang === 'tr' ? 'Temiz' : 'Clean')}
+              </span>
+            </div>
+            <div className="metric-trend-bar">
+              <div 
+                className="metric-trend-fill" 
+                style={{ 
+                  width: `${Math.min(100, Math.round(((stats.spam_or_irrelevant || 0) / Math.max(1, (stats.total_records || 1))) * 100))}%`, 
+                  background: '#ef4444' 
+                }} 
+              />
+            </div>
           </div>
         </div>
       )}
@@ -283,16 +327,28 @@ export const DataManagementPage: React.FC<DataManagementPageProps> = ({ lang }) 
                     <td>{src.rate_limit_rpm} istek/dk</td>
                     <td>
                       {status === 'success' ? (
-                        <span className="badge badge-positive">{lang === 'tr' ? 'Bağlantı Başarılı' : 'Connected'}</span>
+                        <div className="status-pill status-pill-online">
+                          <span className="status-pill-dot" />
+                          <span>{lang === 'tr' ? 'Bağlantı Başarılı' : 'Online'}</span>
+                        </div>
                       ) : status === 'warning' ? (
-                        <span className="badge badge-minor" style={{ color: '#f59e0b' }}>{lang === 'tr' ? 'Erişim Kısıtlı (Tier)' : 'Tier Restricted'}</span>
+                        <div className="status-pill status-pill-away">
+                          <span className="status-pill-dot" />
+                          <span>{lang === 'tr' ? 'Erişim Kısıtlı' : 'Restricted'}</span>
+                        </div>
                       ) : status === 'failed' ? (
-                        <span className="badge badge-negative">{lang === 'tr' ? 'Bağlantı Hatası' : 'Failed'}</span>
+                        <div className="status-pill status-pill-offline">
+                          <span className="status-pill-dot" />
+                          <span>{lang === 'tr' ? 'Bağlantı Hatası' : 'Offline'}</span>
+                        </div>
                       ) : (
-                        <span className="badge badge-neutral">{lang === 'tr' ? 'Yapılandırılmadı' : 'Not Configured'}</span>
+                        <div className="status-pill status-pill-unknown">
+                          <span className="status-pill-dot" />
+                          <span>{lang === 'tr' ? 'Yapılandırılmadı' : 'Unknown'}</span>
+                        </div>
                       )}
                       {meta.last_test_message && (
-                        <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: '0.2rem', maxWidth: '320px' }}>
+                        <div style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: '0.35rem', maxWidth: '320px' }}>
                           {meta.last_test_message}
                         </div>
                       )}

@@ -12,12 +12,14 @@ import {
   Bookmark, 
   Users, 
   TrendingUp, 
+  TrendingDown,
   RefreshCw, 
   Layers,
   PlusCircle,
   DownloadCloud,
   Edit3,
-  Trash2
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 import { AddGameModal } from '../components/AddGameModal';
 import { 
@@ -337,58 +339,106 @@ export const GameDetailPage: React.FC<GameDetailPageProps> = ({ gameId, onSelect
 
       {/* Game Metric Cards */}
       <div className="grid-cards">
-        <div className="metric-card">
+        {/* Toplam Kayıt / Toplanan Yorum: Cyan */}
+        <div className="metric-card metric-card-cyan">
           <div className="metric-card-header">
-            <div className="label">{lang === 'tr' ? 'Toplam Toplanan Yorum' : 'Collected Comments'}</div>
-            <div className="metric-icon-box metric-icon-blue">
-              <Layers size={16} />
+            <div className="label">{lang === 'tr' ? 'Toplam Kayıt' : 'Collected Comments'}</div>
+            <div className="metric-icon-refined metric-icon-cyan">
+              <Layers size={15} />
             </div>
           </div>
-          <div className="value">{detail?.collected_comments_count ?? 0}</div>
+          <div className="metric-val">{detail?.collected_comments_count ?? 0}</div>
           <div className="sub">{game?.genre} &bull; {game?.developer}</div>
+          <div className="metric-trend-footer">
+            <span>{lang === 'tr' ? 'Örneklem Durumu' : 'Sample Status'}</span>
+            <span style={{ color: '#22d3ee', fontWeight: 600 }}>
+              {(detail?.collected_comments_count || 0) >= (detail?.low_sample_threshold || 10) ? 'Yeterli' : 'Düşük'}
+            </span>
+          </div>
+          <div className="metric-trend-bar">
+            <div 
+              className="metric-trend-fill" 
+              style={{ 
+                width: `${Math.min(100, Math.round(((detail?.collected_comments_count || 0) / Math.max(1, (detail?.low_sample_threshold || 10) * 2)) * 100))}%`, 
+                background: '#06b6d4' 
+              }} 
+            />
+          </div>
         </div>
 
-        <div className="metric-card">
+        {/* Pozitif Duygu: Yeşil */}
+        <div className="metric-card metric-card-green">
           <div className="metric-card-header">
-            <div className="label">{lang === 'tr' ? 'Pozitif Oran' : 'Positive Ratio'}</div>
-            <div className="metric-icon-box metric-icon-green">
-              <TrendingUp size={16} />
+            <div className="label">{lang === 'tr' ? 'Pozitif Duygu' : 'Positive Ratio'}</div>
+            <div className="metric-icon-refined metric-icon-green">
+              <TrendingUp size={15} />
             </div>
           </div>
-          <div className="value" style={{ color: '#10b981' }}>
-            %{detail?.sentiment_percentages?.Positive ?? 0}
-          </div>
+          <div className="metric-val">%{detail?.sentiment_percentages?.Positive ?? 0}</div>
           <div className="sub">
             {detail?.sentiment_counts?.Positive ?? 0} / {detail?.collected_comments_count ?? 0} {t.overview.comments_unit}
           </div>
+          <div className="metric-trend-footer">
+            <span>{lang === 'tr' ? 'Pozitif Dönüşüm' : 'Praise Ratio'}</span>
+            <span style={{ color: '#34d399', fontWeight: 600 }}>%{detail?.sentiment_percentages?.Positive ?? 0}</span>
+          </div>
+          <div className="metric-trend-bar">
+            <div 
+              className="metric-trend-fill" 
+              style={{ width: `${detail?.sentiment_percentages?.Positive || 0}%`, background: '#10b981' }} 
+            />
+          </div>
         </div>
 
-        <div className="metric-card">
+        {/* Negatif Duygu: Kırmızı */}
+        <div className="metric-card metric-card-red">
           <div className="metric-card-header">
-            <div className="label">{lang === 'tr' ? 'Negatif Eleştiri Oranı' : 'Negative Critique Ratio'}</div>
-            <div className="metric-icon-box metric-icon-red">
-              <AlertOctagon size={16} />
+            <div className="label">{lang === 'tr' ? 'Negatif Duygu' : 'Negative Critique'}</div>
+            <div className="metric-icon-refined metric-icon-red">
+              <AlertOctagon size={15} />
             </div>
           </div>
-          <div className="value" style={{ color: '#ef4444' }}>
-            %{detail?.sentiment_percentages?.Negative ?? 0}
-          </div>
+          <div className="metric-val">%{detail?.sentiment_percentages?.Negative ?? 0}</div>
           <div className="sub">
             {detail?.sentiment_counts?.Negative ?? 0} / {detail?.collected_comments_count ?? 0} {t.overview.comments_unit}
           </div>
+          <div className="metric-trend-footer">
+            <span>{lang === 'tr' ? 'Şikayet Oranı' : 'Critique Ratio'}</span>
+            <span style={{ color: '#f87171', fontWeight: 600 }}>%{detail?.sentiment_percentages?.Negative ?? 0}</span>
+          </div>
+          <div className="metric-trend-bar">
+            <div 
+              className="metric-trend-fill" 
+              style={{ width: `${detail?.sentiment_percentages?.Negative || 0}%`, background: '#ef4444' }} 
+            />
+          </div>
         </div>
 
-        <div className="metric-card">
+        {/* Kritik / Majör Hatalar: Amber */}
+        <div className="metric-card metric-card-amber">
           <div className="metric-card-header">
             <div className="label">{lang === 'tr' ? 'Kritik / Majör Hata' : 'Critical / Major Bugs'}</div>
-            <div className="metric-icon-box metric-icon-cyan">
-              <Gamepad2 size={16} />
+            <div className="metric-icon-refined metric-icon-amber">
+              <AlertTriangle size={15} />
             </div>
           </div>
-          <div className="value" style={{ color: '#f59e0b' }}>
-            {detail?.critical_bugs_and_usability?.length ?? 0}
-          </div>
+          <div className="metric-val">{detail?.critical_bugs_and_usability?.length ?? 0}</div>
           <div className="sub">{lang === 'tr' ? 'Çökme, softlock veya kontrol arızası' : 'Crashes, softlocks, or control failures'}</div>
+          <div className="metric-trend-footer">
+            <span>{lang === 'tr' ? 'Hata Yoğunluğu' : 'Bug Severity'}</span>
+            <span style={{ color: '#fbbf24', fontWeight: 600 }}>
+              {(detail?.critical_bugs_and_usability?.length || 0) > 0 ? `${detail?.critical_bugs_and_usability?.length} ${lang === 'tr' ? 'Kritik' : 'Critical'}` : '0'}
+            </span>
+          </div>
+          <div className="metric-trend-bar">
+            <div 
+              className="metric-trend-fill" 
+              style={{ 
+                width: `${Math.min(100, (detail?.critical_bugs_and_usability?.length || 0) * 20)}%`, 
+                background: '#f59e0b' 
+              }} 
+            />
+          </div>
         </div>
       </div>
 
