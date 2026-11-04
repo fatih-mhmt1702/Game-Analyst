@@ -96,19 +96,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <SidebarBody className="justify-between gap-6">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo Section */}
-          <div className="flex items-center gap-3 py-2 px-1 justify-center md:justify-start">
-            <div className="size-11 rounded-xl bg-slate-900/90 border border-sky-500/30 flex items-center justify-center shadow-lg shadow-sky-500/20 flex-shrink-0 mx-auto md:mx-0 p-1">
+          <div className="flex items-center gap-2.5 py-1.5 px-0.5 justify-center md:justify-start">
+            <div className="size-9 rounded-xl bg-slate-900/90 border border-sky-500/25 flex items-center justify-center shadow-md shadow-sky-500/15 flex-shrink-0 mx-auto md:mx-0 p-1">
               <img 
                 src="/icons/logo.png" 
                 alt="Game Analyst Logo" 
-                className="size-9 object-contain drop-shadow-[0_2px_10px_rgba(56,189,248,0.5)]"
+                className="size-6 object-contain drop-shadow-[0_2px_6px_rgba(56,189,248,0.4)]"
               />
             </div>
             <SidebarBrandText />
           </div>
 
           {/* Navigation Links */}
-          <div className="mt-5 flex flex-col gap-1.5 w-full">
+          <div className="mt-4 flex flex-col gap-1 w-full">
             {navItems.map((item) => {
               const isActive = currentTab === item.id;
               return (
@@ -121,10 +121,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <img 
                         src={item.iconImg} 
                         alt={item.label} 
-                        className={`size-9 object-contain transition-transform duration-200 group-hover/link:scale-110 ${
+                        className={`size-[22px] object-contain transition-transform duration-150 group-hover/link:scale-110 ${
                           isActive 
-                            ? 'drop-shadow-[0_0_12px_rgba(56,189,248,0.7)] brightness-110 scale-105' 
-                            : 'opacity-90 hover:opacity-100 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]'
+                            ? 'drop-shadow-[0_0_8px_rgba(56,189,248,0.65)] brightness-110' 
+                            : 'opacity-85 hover:opacity-100 drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]'
                         }`}
                       />
                     ),

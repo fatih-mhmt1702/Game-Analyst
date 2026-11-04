@@ -37,7 +37,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             <img 
               src={item.iconImg} 
               alt={item.label} 
-              className={`size-6 object-contain transition-transform ${isActive ? 'scale-115 drop-shadow-[0_0_10px_rgba(56,189,248,0.8)]' : 'opacity-80'}`} 
+              className={`size-[19px] object-contain transition-transform ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'opacity-75'}`} 
             />
             <span>{item.label}</span>
           </button>

@@ -98,12 +98,12 @@ export const DesktopSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-full py-4 hidden md:flex md:flex-col bg-[rgba(9,15,29,0.95)] backdrop-blur-2xl border-r border-[rgba(56,189,248,0.12)] flex-shrink-0 z-30 transition-all duration-300 relative select-none",
-        open ? "px-3.5 w-[268px]" : "px-2 w-[72px]",
+        "h-full py-3.5 hidden md:flex md:flex-col bg-[rgba(9,15,29,0.95)] backdrop-blur-2xl border-r border-[rgba(56,189,248,0.12)] flex-shrink-0 z-30 transition-all duration-300 relative select-none",
+        open ? "px-3 w-[250px]" : "px-2 w-[64px]",
         className
       )}
       animate={{
-        width: animate ? (open ? "268px" : "72px") : "268px",
+        width: animate ? (open ? "250px" : "64px") : "250px",
       }}
       transition={{
         duration: 0.22,
@@ -194,20 +194,20 @@ export const SidebarLink = ({
         onClick={handleClick}
         title={!open ? link.label : undefined}
         className={cn(
-          "h-13 w-full rounded-xl transition-all duration-150 outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link py-1.5",
+          "h-10 w-full rounded-xl transition-all duration-150 outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
           open 
-            ? "px-2.5 justify-start gap-3" 
+            ? "px-2.5 justify-start gap-2.5" 
             : "px-1 justify-center",
           link.isActive
             ? (open
                 ? "bg-gradient-to-r from-sky-500/18 via-sky-500/8 to-transparent text-white font-bold border-l-2 border-sky-400 shadow-[inset_0_0_12px_rgba(56,189,248,0.12)]"
-                : "bg-sky-500/20 text-sky-400 font-bold border border-sky-400/40 shadow-[0_0_14px_rgba(56,189,248,0.25)]")
+                : "bg-sky-500/20 text-sky-400 font-bold border border-sky-400/40 shadow-[0_0_12px_rgba(56,189,248,0.22)]")
             : "text-slate-400 hover:text-white hover:bg-slate-800/50 active:scale-95",
           className
         )}
         {...props}
       >
-        <div className="size-10 flex items-center justify-center flex-shrink-0">
+        <div className="size-7 flex items-center justify-center flex-shrink-0">
           {link.icon}
         </div>
         
