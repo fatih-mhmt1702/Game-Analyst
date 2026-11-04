@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 export interface Links {
   label: string;
+  description?: string;
   href?: string;
   icon: React.ReactNode;
   isActive?: boolean;
@@ -93,21 +94,23 @@ export const DesktopSidebar = ({
   children,
   ...props
 }: Omit<React.ComponentProps<typeof motion.div>, "children"> & { children?: React.ReactNode }) => {
-  const { open, animate } = useSidebar();
+  const { open, setOpen, animate } = useSidebar();
   return (
     <motion.div
       className={cn(
-        "h-full py-4 hidden md:flex md:flex-col bg-[rgba(9,15,29,0.92)] backdrop-blur-xl border-r border-[rgba(56,189,248,0.14)] flex-shrink-0 z-30 transition-all duration-300 relative select-none",
-        open ? "px-3 w-[260px]" : "px-2 w-[68px]",
+        "h-full py-4 hidden md:flex md:flex-col bg-[rgba(9,15,29,0.95)] backdrop-blur-2xl border-r border-[rgba(56,189,248,0.12)] flex-shrink-0 z-30 transition-all duration-300 relative select-none",
+        open ? "px-3 w-[260px]" : "px-2.5 w-[68px]",
         className
       )}
       animate={{
         width: animate ? (open ? "260px" : "68px") : "260px",
       }}
       transition={{
-        duration: 0.25,
+        duration: 0.22,
         ease: [0.16, 1, 0.3, 1],
       }}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
       {...props}
     >
       {children}
@@ -191,38 +194,44 @@ export const SidebarLink = ({
         onClick={handleClick}
         title={!open ? link.label : undefined}
         className={cn(
-          "h-11 rounded-xl transition-all duration-150 outline-none relative overflow-hidden flex items-center cursor-pointer select-none",
+          "h-12 w-full rounded-xl transition-all duration-150 outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
           open 
-            ? "w-full px-3 justify-start gap-3" 
-            : "w-11 justify-center px-0 mx-auto",
+            ? "px-2.5 justify-start gap-2.5" 
+            : "px-1.5 justify-center",
           link.isActive
             ? (open
-                ? "bg-gradient-to-r from-sky-500/20 via-sky-500/10 to-transparent text-sky-400 font-bold border-l-2 border-sky-400 shadow-[inset_0_0_12px_rgba(56,189,248,0.14)]"
-                : "bg-sky-500/20 text-sky-400 font-bold border border-sky-400/50 shadow-[0_0_12px_rgba(56,189,248,0.25)]")
-            : "text-slate-400 hover:text-white hover:bg-slate-800/60 active:scale-95",
+                ? "bg-gradient-to-r from-sky-500/18 via-sky-500/8 to-transparent text-white font-bold border-l-2 border-sky-400 shadow-[inset_0_0_12px_rgba(56,189,248,0.12)]"
+                : "bg-sky-500/20 text-sky-400 font-bold border border-sky-400/40 shadow-[0_0_14px_rgba(56,189,248,0.25)]")
+            : "text-slate-400 hover:text-white hover:bg-slate-800/50 active:scale-95",
           className
         )}
         {...props}
       >
-        <div className={cn(
-          "size-5 flex items-center justify-center flex-shrink-0 transition-transform duration-150 group-hover/tooltip:scale-110",
-          link.isActive ? "text-sky-400" : "text-slate-400 group-hover/tooltip:text-slate-100"
-        )}>
+        <div className="size-8 flex items-center justify-center flex-shrink-0">
           {link.icon}
         </div>
         
-        {/* Expanded text */}
-        <motion.span
-          animate={{
-            display: animate ? (open ? "inline-block" : "none") : "inline-block",
-            opacity: animate ? (open ? 1 : 0) : 1,
-            x: animate ? (open ? 0 : -6) : 0,
-          }}
-          transition={{ duration: 0.16 }}
-          className="text-sm tracking-tight whitespace-nowrap overflow-hidden text-ellipsis flex-1 text-left !p-0 !m-0 font-medium"
-        >
-          {link.label}
-        </motion.span>
+        {/* Expanded text & description */}
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -6 }}
+              transition={{ duration: 0.16 }}
+              className="flex flex-col min-w-0 flex-1 text-left overflow-hidden ml-1"
+            >
+              <span className="text-sm tracking-tight whitespace-nowrap overflow-hidden text-ellipsis font-semibold text-slate-100">
+                {link.label}
+              </span>
+              {link.description && (
+                <span className="text-[11px] text-slate-400 font-normal whitespace-nowrap overflow-hidden text-ellipsis leading-tight">
+                  {link.description}
+                </span>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* Expanded badge */}
         {link.badge && open && (

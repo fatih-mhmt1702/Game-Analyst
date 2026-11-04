@@ -354,25 +354,25 @@ export const DataManagementPage: React.FC<DataManagementPageProps> = ({ lang }) 
                       )}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'inline-flex', gap: '0.45rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                         <button
-                          className="btn btn-secondary"
+                          className="btn btn-secondary table-action-btn"
                           disabled={testingSource === src.name || isProcessing}
                           onClick={() => handleTestConnection(src.name)}
                           type="button"
                         >
-                          <RefreshCw size={13} className={testingSource === src.name ? 'animate-spin' : ''} />
+                          <RefreshCw size={12} className={testingSource === src.name ? 'animate-spin' : ''} />
                           <span>{t.data_mgmt.test_connection}</span>
                         </button>
 
                         {isLiveApi && (
                           <button
-                            className="btn btn-primary"
+                            className="btn btn-primary table-action-btn"
                             disabled={isProcessing}
                             onClick={() => handleLiveFetch(src.name as 'steam' | 'reddit' | 'x')}
                             type="button"
                           >
-                            <DownloadCloud size={13} className={fetchingLiveSource === src.name ? 'animate-spin' : ''} />
+                            <DownloadCloud size={12} className={fetchingLiveSource === src.name ? 'animate-spin' : ''} />
                             <span>{lang === 'tr' ? 'Canlı Çek' : 'Fetch Live'}</span>
                           </button>
                         )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Trophy, Gamepad2, Lightbulb, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { tr } from '../i18n/tr';
 import { en } from '../i18n/en';
 
@@ -16,19 +16,16 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenMenu,
   lang,
 }) => {
-  const t = lang === 'tr' ? tr : en;
-
   const items = [
-    { id: 'overview', label: lang === 'tr' ? 'Özet' : 'Overview', icon: LayoutDashboard },
-    { id: 'top10', label: 'Top 10', icon: Trophy },
-    { id: 'game_detail', label: lang === 'tr' ? 'Oyunlar' : 'Games', icon: Gamepad2 },
-    { id: 'recommendations', label: lang === 'tr' ? 'Öneriler' : 'Advice', icon: Lightbulb },
+    { id: 'overview', label: lang === 'tr' ? 'Özet' : 'Overview', iconImg: '/icons/overview.png' },
+    { id: 'top10', label: 'Top 10', iconImg: '/icons/top10.png' },
+    { id: 'game_detail', label: lang === 'tr' ? 'Oyunlar' : 'Games', iconImg: '/icons/game_detail.png' },
+    { id: 'recommendations', label: lang === 'tr' ? 'Öneriler' : 'Advice', iconImg: '/icons/recommendations.png' },
   ];
 
   return (
     <nav className="mobile-bottom-nav" aria-label="Mobil Gezinme">
       {items.map((item) => {
-        const Icon = item.icon;
         const isActive = currentTab === item.id;
         return (
           <button
@@ -37,7 +34,11 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             onClick={() => onSelectTab(item.id)}
             type="button"
           >
-            <Icon size={20} />
+            <img 
+              src={item.iconImg} 
+              alt={item.label} 
+              className={`size-5 object-contain transition-transform ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'opacity-70'}`} 
+            />
             <span>{item.label}</span>
           </button>
         );

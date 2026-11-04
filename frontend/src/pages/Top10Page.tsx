@@ -196,12 +196,12 @@ export const Top10Page: React.FC<Top10PageProps> = ({ lang, onInspectGame }) => 
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <button
-                      className="btn btn-primary"
-                      style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+                      className="btn btn-primary table-action-btn"
                       onClick={() => onInspectGame(game.game_id)}
+                      type="button"
                     >
                       <span>{t.top10.inspect}</span>
-                      <ArrowRight size={14} />
+                      <ArrowRight size={13} />
                     </button>
                   </td>
                 </tr>
