@@ -97,11 +97,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
           {/* Logo Section */}
           <div className="flex items-center gap-3 py-2 px-1 justify-center md:justify-start">
-            <div className="size-10 rounded-xl bg-slate-900/80 border border-sky-500/25 flex items-center justify-center shadow-lg shadow-sky-500/15 flex-shrink-0 mx-auto md:mx-0 p-1">
+            <div className="size-11 rounded-xl bg-slate-900/90 border border-sky-500/30 flex items-center justify-center shadow-lg shadow-sky-500/20 flex-shrink-0 mx-auto md:mx-0 p-1">
               <img 
                 src="/icons/logo.png" 
                 alt="Game Analyst Logo" 
-                className="size-8 object-contain drop-shadow-[0_2px_8px_rgba(56,189,248,0.4)]"
+                className="size-9 object-contain drop-shadow-[0_2px_10px_rgba(56,189,248,0.5)]"
               />
             </div>
             <SidebarBrandText />
@@ -121,10 +121,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <img 
                         src={item.iconImg} 
                         alt={item.label} 
-                        className={`size-7 object-contain transition-transform duration-200 group-hover/link:scale-110 ${
+                        className={`size-9 object-contain transition-transform duration-200 group-hover/link:scale-110 ${
                           isActive 
-                            ? 'drop-shadow-[0_0_10px_rgba(56,189,248,0.6)] brightness-110' 
-                            : 'opacity-85 hover:opacity-100 drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]'
+                            ? 'drop-shadow-[0_0_12px_rgba(56,189,248,0.7)] brightness-110 scale-105' 
+                            : 'opacity-90 hover:opacity-100 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]'
                         }`}
                       />
                     ),
