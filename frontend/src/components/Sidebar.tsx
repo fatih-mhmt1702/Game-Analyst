@@ -1,24 +1,16 @@
-import React, { useState, useEffect, useMemo, useCallback, memo } from 'react';
+import React, { memo } from 'react';
 import { 
-  ChevronLeft,
-  ChevronRight,
-  LayoutGrid,
-  Trophy,
-  Gamepad2,
-  TrendingUp,
-  BarChart3,
-  Lightbulb,
-  Database
+  LayoutGrid, 
+  Trophy, 
+  Gamepad2, 
+  TrendingUp, 
+  BarChart3, 
+  Lightbulb, 
+  Database,
+  X
 } from 'lucide-react';
 import { tr } from '../i18n/tr';
 import { en } from '../i18n/en';
-import { 
-  Sidebar as ModernSidebar, 
-  SidebarBody, 
-  SidebarLink, 
-  useSidebar 
-} from '@/components/ui/sidebar';
-import { motion } from 'framer-motion';
 
 interface SidebarProps {
   currentTab: string;
@@ -36,217 +28,101 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
   onCloseMobile
 }) => {
   const t = lang === 'tr' ? tr : en;
-  const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    setOpen(isMobileOpen);
-  }, [isMobileOpen]);
+  const navItems = [
+    { id: 'overview', label: t.nav.overview, icon: LayoutGrid },
+    { id: 'top10', label: t.nav.top10, icon: Trophy },
+    { id: 'game_detail', label: t.nav.game_detail, icon: Gamepad2 },
+    { id: 'industry', label: t.nav.industry, icon: TrendingUp },
+    { id: 'charts', label: t.nav.charts, icon: BarChart3 },
+    { id: 'recommendations', label: t.nav.recommendations, icon: Lightbulb },
+    { id: 'data_mgmt', label: t.nav.data_mgmt, icon: Database },
+  ];
 
-  const handleSetOpen = useCallback((nextVal: React.SetStateAction<boolean>) => {
-    setOpen((prev) => {
-      const resolved = typeof nextVal === 'function' ? nextVal(prev) : nextVal;
-      if (!resolved && onCloseMobile) {
-        onCloseMobile();
-      }
-      return resolved;
-    });
-  }, [onCloseMobile]);
-
-  // Exact vector SVG icons matching the reference photograph
-  const navItems = useMemo(() => [
-    { 
-      id: 'overview', 
-      label: t.nav.overview, 
-      icon: (isActive: boolean) => (
-        <LayoutGrid 
-          size={20} 
-          strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
-            isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
-          }`}
-        />
-      )
-    },
-    { 
-      id: 'top10', 
-      label: t.nav.top10, 
-      icon: (isActive: boolean) => (
-        <Trophy 
-          size={20} 
-          strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
-            isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
-          }`}
-        />
-      )
-    },
-    { 
-      id: 'game_detail', 
-      label: t.nav.game_detail, 
-      icon: (isActive: boolean) => (
-        <Gamepad2 
-          size={20} 
-          strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
-            isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
-          }`}
-        />
-      )
-    },
-    { 
-      id: 'industry', 
-      label: t.nav.industry, 
-      icon: (isActive: boolean) => (
-        <TrendingUp 
-          size={20} 
-          strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
-            isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
-          }`}
-        />
-      )
-    },
-    { 
-      id: 'charts', 
-      label: t.nav.charts, 
-      icon: (isActive: boolean) => (
-        <BarChart3 
-          size={20} 
-          strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
-            isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
-          }`}
-        />
-      )
-    },
-    { 
-      id: 'recommendations', 
-      label: t.nav.recommendations, 
-      icon: (isActive: boolean) => (
-        <Lightbulb 
-          size={20} 
-          strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
-            isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
-          }`}
-        />
-      )
-    },
-    { 
-      id: 'data_mgmt', 
-      label: t.nav.data_mgmt, 
-      icon: (isActive: boolean) => (
-        <Database 
-          size={20} 
-          strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
-            isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
-          }`}
-        />
-      )
-    },
-  ], [t]);
-
-  const handleItemClick = useCallback((id: string) => {
+  const handleItemClick = (id: string) => {
     onSelectTab(id);
-  }, [onSelectTab]);
+    if (onCloseMobile) {
+      onCloseMobile();
+    }
+  };
 
   return (
-    <ModernSidebar open={open} setOpen={handleSetOpen}>
-      <SidebarBody className="justify-between gap-4">
-        <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-          {/* Logo Section matching photo */}
-          <div className="h-[64px] flex items-center gap-3 px-1.5 justify-center md:justify-start border-b border-[#14233e]/80 flex-shrink-0">
-            <div className="size-[38px] rounded-xl bg-gradient-to-tr from-[#0284c7] via-[#0ea5e9] to-[#38bdf8] flex items-center justify-center shadow-lg shadow-sky-500/25 flex-shrink-0">
+    <>
+      {/* Mobile backdrop overlay */}
+      {isMobileOpen && (
+        <div 
+          className="sidebar-overlay" 
+          onClick={onCloseMobile}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
+        {/* Header Section matching screenshot */}
+        <div className="sidebar-header">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-gradient-to-tr from-[#0284c7] via-[#0ea5e9] to-[#38bdf8] flex items-center justify-center shadow-lg shadow-sky-500/25 flex-shrink-0">
               <Gamepad2 size={22} strokeWidth={2} className="text-white drop-shadow-sm" />
             </div>
-            <SidebarBrandText />
+            <div className="overflow-hidden">
+              <div className="brand-title">Game Analyst</div>
+              <div className="brand-sub">NEXT FEST INTELLIGENCE</div>
+            </div>
           </div>
 
-          {/* Navigation Items */}
-          <nav className="mt-4 flex flex-col gap-1 w-full" aria-label="Main Navigation">
-            {navItems.map((item) => {
-              const isActive = currentTab === item.id;
-              return (
-                <SidebarLink
-                  key={item.id}
-                  link={{
-                    label: item.label,
-                    icon: item.icon(isActive),
-                    isActive,
-                    onClick: () => handleItemClick(item.id)
-                  }}
-                />
-              );
-            })}
-          </nav>
+          {/* Close button visible only on mobile */}
+          {onCloseMobile && (
+            <button 
+              className="mobile-close-btn" 
+              onClick={onCloseMobile}
+              aria-label="Menüyü Kapat"
+            >
+              <X size={20} />
+            </button>
+          )}
         </div>
 
-        {/* Sidebar Footer with collapse/expand toggle */}
-        <SidebarFooterInfo lang={lang} />
-      </SidebarBody>
-    </ModernSidebar>
+        {/* Navigation List */}
+        <ul className="nav-list" aria-label="Main Navigation">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = currentTab === item.id;
+            return (
+              <li
+                key={item.id}
+                className={`nav-item ${isActive ? 'active' : ''}`}
+                onClick={() => handleItemClick(item.id)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleItemClick(item.id);
+                  }
+                }}
+              >
+                <Icon 
+                  size={20} 
+                  strokeWidth={isActive ? 2 : 1.85} 
+                  className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be]'}
+                />
+                <span className="truncate">{item.label}</span>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Footer info matching dark theme */}
+        <div className="sidebar-footer">
+          <div className="flex items-center gap-2">
+            <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] flex-shrink-0" />
+            <span className="text-[11px] font-medium text-slate-400 whitespace-nowrap">v1.2.0 Live</span>
+          </div>
+          <span className="text-[10px] text-slate-500 font-mono">Next Fest</span>
+        </div>
+      </aside>
+    </>
   );
 });
 
-Sidebar.displayName = "Sidebar";
-
-const SidebarBrandText = memo(() => {
-  const { open } = useSidebar();
-  return (
-    <motion.div
-      animate={{
-        display: open ? "block" : "none",
-        opacity: open ? 1 : 0,
-        x: open ? 0 : -6,
-      }}
-      transition={{ duration: 0.16 }}
-      className="overflow-hidden whitespace-nowrap min-w-0"
-    >
-      <div className="font-extrabold text-[15px] text-[#7dd3fc] tracking-tight leading-snug drop-shadow-[0_0_8px_rgba(56,189,248,0.25)]">
-        Game Analyst
-      </div>
-      <div className="text-[10px] font-semibold text-slate-400 tracking-[0.08em] uppercase leading-tight">
-        NEXT FEST INTELLIGENCE
-      </div>
-    </motion.div>
-  );
-});
-
-SidebarBrandText.displayName = "SidebarBrandText";
-
-const SidebarFooterInfo = memo(({ lang }: { lang: 'tr' | 'en' }) => {
-  const { open, toggleSidebar } = useSidebar();
-  return (
-    <div className="pt-3 border-t border-[#14233e]/80 flex items-center justify-between text-[11px] text-slate-500 flex-shrink-0">
-      <div className="flex items-center gap-2 overflow-hidden">
-        <span className="size-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] flex-shrink-0" />
-        <motion.span
-          animate={{
-            display: open ? "inline-block" : "none",
-            opacity: open ? 1 : 0,
-          }}
-          transition={{ duration: 0.14 }}
-          className="text-slate-400 font-medium whitespace-nowrap text-[11px]"
-        >
-          v1.2.0 Live
-        </motion.span>
-      </div>
-
-      <button
-        type="button"
-        onClick={toggleSidebar}
-        title={open 
-          ? (lang === 'tr' ? 'Kenar Çubuğunu Daralt' : 'Collapse Sidebar') 
-          : (lang === 'tr' ? 'Kenar Çubuğunu Genişlet' : 'Expand Sidebar')}
-        className="hidden md:flex items-center justify-center size-7 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700/60 cursor-pointer ml-auto"
-      >
-        {open ? <ChevronLeft className="size-4" /> : <ChevronRight className="size-4" />}
-      </button>
-    </div>
-  );
-});
-
-SidebarFooterInfo.displayName = "SidebarFooterInfo";
-
-SidebarFooterInfo.displayName = "SidebarFooterInfo";
+Sidebar.displayName = 'Sidebar';
