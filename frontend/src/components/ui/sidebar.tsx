@@ -98,7 +98,7 @@ export const DesktopSidebar = ({
   return (
     <motion.aside
       className={cn(
-        "h-full py-3.5 hidden md:flex md:flex-col bg-[rgba(9,15,29,0.95)] backdrop-blur-xl border-r border-[rgba(56,189,248,0.12)] flex-shrink-0 z-30 relative select-none",
+        "h-full py-3.5 hidden md:flex md:flex-col bg-gradient-to-b from-[#060c1c]/98 via-[#050a17]/98 to-[#040712]/99 backdrop-blur-2xl border-r border-[#152542] flex-shrink-0 z-30 relative select-none shadow-[4px_0_24px_rgba(0,0,0,0.5)]",
         open ? "px-3 w-[240px]" : "px-3 w-[72px]",
         className
       )}
@@ -133,7 +133,7 @@ export const MobileSidebar = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[990] md:hidden"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[990] md:hidden"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
@@ -146,7 +146,7 @@ export const MobileSidebar = ({
               ease: [0.16, 1, 0.3, 1],
             }}
             className={cn(
-              "fixed h-full w-[85vw] max-w-[280px] inset-y-0 left-0 bg-[rgba(9,15,29,0.98)] backdrop-blur-2xl p-4 z-[1000] flex flex-col justify-between border-r border-[rgba(56,189,248,0.2)] shadow-2xl shadow-black md:hidden",
+              "fixed h-full w-[85vw] max-w-[280px] inset-y-0 left-0 bg-gradient-to-b from-[#070e20] via-[#050a17] to-[#040712] backdrop-blur-2xl p-4 z-[1000] flex flex-col justify-between border-r border-[#1c3055] shadow-2xl shadow-black md:hidden",
               className
             )}
             {...props}
@@ -189,28 +189,28 @@ export const SidebarLink = memo(({
   };
 
   return (
-    <div className="relative group/tooltip flex justify-center w-full">
+    <div className="relative group/tooltip flex justify-center w-full my-0.5">
       <button
         type="button"
         onClick={handleClick}
         className={cn(
-          "h-[46px] w-full rounded-xl transition-all duration-[180ms] outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
+          "h-[46px] w-full rounded-xl transition-all duration-[160ms] outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
           open 
-            ? "px-3 justify-start gap-[12px]" 
+            ? "px-3.5 justify-start gap-[12px]" 
             : "px-0 justify-center",
           link.isActive
-            ? "border-l-2 border-[#38bdf8] bg-sky-500/10 text-sky-400 font-medium shadow-[inset_0_0_12px_rgba(56,189,248,0.08)]"
-            : "border-l-2 border-transparent text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 active:bg-slate-800/60",
+            ? "border-l-[3.5px] border-l-[#38bdf8] border-t border-r border-b border-sky-500/20 bg-gradient-to-r from-[#0c2246]/95 via-[#0a1832]/85 to-[#081224]/75 text-[#38bdf8] font-semibold shadow-[0_0_16px_rgba(56,189,248,0.16),inset_0_0_12px_rgba(56,189,248,0.06)]"
+            : "border-l-[3.5px] border-l-transparent border-t border-r border-b border-transparent text-[#8ea2be] hover:text-white hover:bg-[#0c1a32]/60 hover:border-l-sky-400/40 active:bg-[#0c1a32]/80",
           className
         )}
         {...props}
       >
-        {/* Fixed 22px icon slot */}
-        <div className="w-[22px] h-[22px] flex items-center justify-center flex-shrink-0 transition-colors duration-[180ms]">
+        {/* Fixed 20px icon slot */}
+        <div className="w-[20px] h-[20px] flex items-center justify-center flex-shrink-0 transition-colors duration-[160ms]">
           {link.icon}
         </div>
         
-        {/* Expanded text & description */}
+        {/* Expanded text */}
         <AnimatePresence>
           {open && (
             <motion.div
@@ -220,14 +220,12 @@ export const SidebarLink = memo(({
               transition={{ duration: 0.14 }}
               className="flex flex-col min-w-0 flex-1 text-left overflow-hidden"
             >
-              <span className="text-[14px] leading-tight tracking-tight whitespace-nowrap overflow-hidden text-ellipsis font-medium text-slate-100">
+              <span className={cn(
+                "text-[14px] leading-tight tracking-tight whitespace-nowrap overflow-hidden text-ellipsis transition-colors",
+                link.isActive ? "text-[#38bdf8] font-semibold" : "text-[#8ea2be] group-hover/link:text-white font-medium"
+              )}>
                 {link.label}
               </span>
-              {link.description && (
-                <span className="text-[11px] text-slate-400/90 font-normal whitespace-nowrap overflow-hidden text-ellipsis leading-tight mt-0.5">
-                  {link.description}
-                </span>
-              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -249,8 +247,8 @@ export const SidebarLink = memo(({
       {/* Floating tooltip when collapsed on desktop */}
       {!open && (
         <div className="hidden md:group-hover/tooltip:flex pointer-events-none absolute left-full ml-3 top-1/2 -translate-y-1/2 z-[100] items-center">
-          <div className="bg-slate-900/95 text-slate-100 text-[13px] font-medium px-2.5 py-1.5 rounded-lg border border-slate-700/80 shadow-xl whitespace-nowrap backdrop-blur-md flex items-center gap-2">
-            <span>{link.label}</span>
+          <div className="bg-[#091326]/95 text-slate-100 text-[13px] font-medium px-3 py-1.5 rounded-lg border border-sky-500/30 shadow-[0_4px_20px_rgba(0,0,0,0.6)] whitespace-nowrap backdrop-blur-md flex items-center gap-2">
+            <span className={link.isActive ? "text-[#38bdf8] font-semibold" : "text-slate-200"}>{link.label}</span>
             {link.badge}
           </div>
         </div>

@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import { 
   Menu,
-  Grid2X2,
+  LayoutGrid,
   Trophy,
-  Crosshair,
-  Sparkles
+  Gamepad2,
+  Lightbulb
 } from 'lucide-react';
 
 interface MobileBottomNavProps {
@@ -25,10 +25,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
       id: 'overview', 
       label: lang === 'tr' ? 'Özet' : 'Overview', 
       icon: (isActive: boolean) => (
-        <Grid2X2 
+        <LayoutGrid 
           size={20} 
-          strokeWidth={1.8} 
-          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+          strokeWidth={1.85} 
+          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
         />
       )
     },
@@ -38,8 +38,8 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
       icon: (isActive: boolean) => (
         <Trophy 
           size={20} 
-          strokeWidth={1.8} 
-          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+          strokeWidth={1.85} 
+          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
         />
       )
     },
@@ -47,10 +47,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
       id: 'game_detail', 
       label: lang === 'tr' ? 'Oyunlar' : 'Games', 
       icon: (isActive: boolean) => (
-        <Crosshair 
+        <Gamepad2 
           size={20} 
-          strokeWidth={1.8} 
-          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+          strokeWidth={1.85} 
+          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
         />
       )
     },
@@ -58,10 +58,10 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
       id: 'recommendations', 
       label: lang === 'tr' ? 'Öneriler' : 'Advice', 
       icon: (isActive: boolean) => (
-        <Sparkles 
+        <Lightbulb 
           size={20} 
-          strokeWidth={1.8} 
-          className={isActive ? 'text-sky-400 drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-slate-400'} 
+          strokeWidth={1.85} 
+          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
         />
       )
     },
@@ -90,7 +90,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
         type="button"
         title={lang === 'tr' ? 'Daha Fazla Menü' : 'More Menu'}
       >
-        <Menu size={20} strokeWidth={1.8} className="text-slate-400" />
+        <Menu size={20} strokeWidth={1.85} className="text-[#8ea2be]" />
         <span>{lang === 'tr' ? 'Menü' : 'Menu'}</span>
       </button>
     </nav>
