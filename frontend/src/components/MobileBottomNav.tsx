@@ -28,7 +28,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
         <LayoutGrid 
           size={20} 
           strokeWidth={1.85} 
-          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
+          color={isActive ? '#38bdf8' : '#8ea2be'} 
         />
       )
     },
@@ -39,7 +39,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
         <Trophy 
           size={20} 
           strokeWidth={1.85} 
-          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
+          color={isActive ? '#38bdf8' : '#8ea2be'} 
         />
       )
     },
@@ -50,7 +50,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
         <Gamepad2 
           size={20} 
           strokeWidth={1.85} 
-          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
+          color={isActive ? '#38bdf8' : '#8ea2be'} 
         />
       )
     },
@@ -61,7 +61,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
         <Lightbulb 
           size={20} 
           strokeWidth={1.85} 
-          className={isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.7)]' : 'text-[#8ea2be]'} 
+          color={isActive ? '#38bdf8' : '#8ea2be'} 
         />
       )
     },
@@ -90,7 +90,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = memo(({
         type="button"
         title={lang === 'tr' ? 'Daha Fazla Menü' : 'More Menu'}
       >
-        <Menu size={20} strokeWidth={1.85} className="text-[#8ea2be]" />
+        <Menu size={20} strokeWidth={1.85} color="#8ea2be" />
         <span>{lang === 'tr' ? 'Menü' : 'Menu'}</span>
       </button>
     </nav>

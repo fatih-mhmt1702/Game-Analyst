@@ -48,7 +48,6 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
 
   return (
     <>
-      {/* Mobile backdrop overlay */}
       {isMobileOpen && (
         <div 
           className="sidebar-overlay" 
@@ -57,66 +56,56 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
         />
       )}
 
-      <aside className={`sidebar bg-[#080d1a] border-r border-[#131b2e] w-[260px] min-w-[260px] flex flex-col h-screen flex-shrink-0 z-20 select-none ${isMobileOpen ? 'mobile-open' : ''}`}>
+      <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
         {/* Sol üst: Game Analyst / NEXT FEST INTELLIGENCE */}
-        <div className="p-6 pb-6 border-b border-[#131b2e]/60 relative flex-shrink-0">
-          <Gamepad2 className="text-white size-[24px] mb-2.5" strokeWidth={1.8} />
-          <h1 className="text-[#38bdf8] font-bold text-[20px] leading-snug tracking-tight">
-            Game Analyst
-          </h1>
-          <p className="text-[#64748b] text-[10px] font-semibold tracking-wider uppercase mt-1">
-            NEXT FEST INTELLIGENCE
-          </p>
+        <div className="sidebar-header">
+          <div className="sidebar-logo-icon">
+            <Gamepad2 size={24} strokeWidth={1.8} color="#ffffff" />
+          </div>
+          <h1 className="brand-title">Game Analyst</h1>
+          <div className="brand-sub">NEXT FEST INTELLIGENCE</div>
 
-          {/* Close button visible only on mobile */}
           {onCloseMobile && (
             <button 
-              className="mobile-close-btn absolute right-4 top-5 text-slate-400 hover:text-white p-1" 
+              type="button"
+              className="mobile-close-btn" 
               onClick={onCloseMobile}
               aria-label="Menüyü Kapat"
+              style={{ position: 'absolute', right: '1rem', top: '1.25rem' }}
             >
               <X size={20} />
             </button>
           )}
         </div>
 
-        {/* Navigasyon Listesi (Tek satır, dikeyde ortalanmış flex-row, solda outline ikon, sağda başlık) */}
-        <nav className="flex-1 p-3.5 flex flex-col gap-2 overflow-y-auto" aria-label="Main Navigation">
+        {/* Navigasyon Menüsü: Yatay (flex-row), solda sade outline SVG ikon, sağda tek satır başlık */}
+        <ul className="nav-list" role="navigation" aria-label="Main Navigation">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;
             return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => handleItemClick(item.id)}
-                className={`w-full flex flex-row items-center gap-3 px-3.5 h-[46px] rounded-xl text-left transition-all duration-150 cursor-pointer outline-none ${
-                  isActive
-                    ? 'bg-[#0e1c3a] border border-[#0099ff]/30 border-l-[3.5px] border-l-[#00d2ff] text-[#00d2ff] font-semibold shadow-[0_0_14px_rgba(0,180,255,0.12)]'
-                    : 'text-[#8ea0b8] hover:text-white hover:bg-white/[0.04] font-medium border border-transparent border-l-[3.5px] border-l-transparent'
-                }`}
-              >
-                {/* Sabit 22px outline SVG ikon */}
-                <div className="w-[22px] h-[22px] flex items-center justify-center flex-shrink-0">
-                  <Icon 
-                    size={20} 
-                    strokeWidth={1.8} 
-                    className={`transition-colors ${
-                      isActive ? 'text-[#00d2ff]' : 'text-[#8ea0b8]'
-                    }`} 
-                  />
-                </div>
-                {/* Tek satıra tam sığan menü başlığı */}
-                <span className="text-[14.5px] leading-none tracking-tight whitespace-nowrap">
-                  {item.label}
-                </span>
-              </button>
+              <li key={item.id} style={{ listStyle: 'none' }}>
+                <button
+                  type="button"
+                  onClick={() => handleItemClick(item.id)}
+                  className={`nav-item ${isActive ? 'active' : ''}`}
+                >
+                  <span className="nav-item-icon">
+                    <Icon 
+                      size={20} 
+                      strokeWidth={1.8} 
+                      color={isActive ? '#00d2ff' : 'currentColor'} 
+                    />
+                  </span>
+                  <span className="nav-item-label">{item.label}</span>
+                </button>
+              </li>
             );
           })}
-        </nav>
+        </ul>
 
-        {/* En altta sürüm bilgileri ("v1.2.0 Live", "Next Fest") */}
-        <div className="px-6 py-4 border-t border-[#131b2e]/60 flex items-center justify-between text-[#64748b] text-[12px] flex-shrink-0">
+        {/* En alt: Sürüm bilgileri ("v1.2.0 Live", "Next Fest") */}
+        <div className="sidebar-footer">
           <span>v1.2.0 Live</span>
           <span>Next Fest</span>
         </div>
