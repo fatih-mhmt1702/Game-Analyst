@@ -52,16 +52,16 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
     });
   }, [onCloseMobile]);
 
-  // Exact vector SVG icons matching the reference photograph
+  // Exact vector SVG icons matching the reference photograph (fixed 22px, uniform strokeWidth 1.85)
   const navItems = useMemo(() => [
     { 
       id: 'overview', 
       label: t.nav.overview, 
       icon: (isActive: boolean) => (
         <LayoutGrid 
-          size={20} 
+          size={22} 
           strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
+          className={`flex-shrink-0 transition-all duration-[180ms] ${
             isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
           }`}
         />
@@ -72,9 +72,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
       label: t.nav.top10, 
       icon: (isActive: boolean) => (
         <Trophy 
-          size={20} 
+          size={22} 
           strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
+          className={`flex-shrink-0 transition-all duration-[180ms] ${
             isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
           }`}
         />
@@ -85,9 +85,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
       label: t.nav.game_detail, 
       icon: (isActive: boolean) => (
         <Gamepad2 
-          size={20} 
+          size={22} 
           strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
+          className={`flex-shrink-0 transition-all duration-[180ms] ${
             isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
           }`}
         />
@@ -98,9 +98,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
       label: t.nav.industry, 
       icon: (isActive: boolean) => (
         <TrendingUp 
-          size={20} 
+          size={22} 
           strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
+          className={`flex-shrink-0 transition-all duration-[180ms] ${
             isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
           }`}
         />
@@ -111,9 +111,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
       label: t.nav.charts, 
       icon: (isActive: boolean) => (
         <BarChart3 
-          size={20} 
+          size={22} 
           strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
+          className={`flex-shrink-0 transition-all duration-[180ms] ${
             isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
           }`}
         />
@@ -124,9 +124,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
       label: t.nav.recommendations, 
       icon: (isActive: boolean) => (
         <Lightbulb 
-          size={20} 
+          size={22} 
           strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
+          className={`flex-shrink-0 transition-all duration-[180ms] ${
             isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
           }`}
         />
@@ -137,9 +137,9 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
       label: t.nav.data_mgmt, 
       icon: (isActive: boolean) => (
         <Database 
-          size={20} 
+          size={22} 
           strokeWidth={1.85} 
-          className={`flex-shrink-0 transition-all duration-150 ${
+          className={`flex-shrink-0 transition-all duration-[180ms] ${
             isActive ? 'text-[#38bdf8] drop-shadow-[0_0_8px_rgba(56,189,248,0.65)]' : 'text-[#8ea2be] group-hover/link:text-white'
           }`}
         />
@@ -155,16 +155,16 @@ export const Sidebar: React.FC<SidebarProps> = memo(({
     <ModernSidebar open={open} setOpen={handleSetOpen}>
       <SidebarBody className="justify-between gap-4">
         <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-          {/* Logo Section matching photo */}
-          <div className="h-[64px] flex items-center gap-3 px-1.5 justify-center md:justify-start border-b border-[#14233e]/80 flex-shrink-0">
-            <div className="size-[38px] rounded-xl bg-gradient-to-tr from-[#0284c7] via-[#0ea5e9] to-[#38bdf8] flex items-center justify-center shadow-lg shadow-sky-500/25 flex-shrink-0">
-              <Gamepad2 size={22} strokeWidth={2} className="text-white drop-shadow-sm" />
+          {/* Logo Section (56–64px height) */}
+          <div className="h-[60px] flex items-center gap-3 px-1.5 justify-center md:justify-start border-b border-[#14233e]/80 flex-shrink-0">
+            <div className="size-[36px] rounded-xl bg-gradient-to-tr from-[#0284c7] via-[#0ea5e9] to-[#38bdf8] flex items-center justify-center shadow-lg shadow-sky-500/25 flex-shrink-0">
+              <Gamepad2 size={20} strokeWidth={2} className="text-white drop-shadow-sm" />
             </div>
             <SidebarBrandText />
           </div>
 
-          {/* Navigation Items */}
-          <nav className="mt-4 flex flex-col gap-1 w-full" aria-label="Main Navigation">
+          {/* Navigation Items (16px spacing) */}
+          <nav className="mt-[16px] flex flex-col gap-1 w-full" aria-label="Main Navigation">
             {navItems.map((item) => {
               const isActive = currentTab === item.id;
               return (
@@ -246,7 +246,5 @@ const SidebarFooterInfo = memo(({ lang }: { lang: 'tr' | 'en' }) => {
     </div>
   );
 });
-
-SidebarFooterInfo.displayName = "SidebarFooterInfo";
 
 SidebarFooterInfo.displayName = "SidebarFooterInfo";

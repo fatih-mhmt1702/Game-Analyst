@@ -194,19 +194,19 @@ export const SidebarLink = memo(({
         type="button"
         onClick={handleClick}
         className={cn(
-          "h-[46px] w-full rounded-xl transition-all duration-[160ms] outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
+          "h-[46px] w-full rounded-xl transition-all duration-[180ms] outline-none relative overflow-hidden flex items-center cursor-pointer select-none group/link",
           open 
-            ? "px-3.5 justify-start gap-[12px]" 
+            ? "px-3 justify-start gap-[12px]" 
             : "px-0 justify-center",
           link.isActive
-            ? "border-l-[3.5px] border-l-[#38bdf8] border-t border-r border-b border-sky-500/20 bg-gradient-to-r from-[#0c2246]/95 via-[#0a1832]/85 to-[#081224]/75 text-[#38bdf8] font-semibold shadow-[0_0_16px_rgba(56,189,248,0.16),inset_0_0_12px_rgba(56,189,248,0.06)]"
-            : "border-l-[3.5px] border-l-transparent border-t border-r border-b border-transparent text-[#8ea2be] hover:text-white hover:bg-[#0c1a32]/60 hover:border-l-sky-400/40 active:bg-[#0c1a32]/80",
+            ? "border-l-[3px] border-l-[#38bdf8] border-t border-r border-b border-sky-500/20 bg-gradient-to-r from-[#0c2246]/95 via-[#0a1832]/85 to-[#081224]/75 text-[#38bdf8] font-semibold shadow-[0_0_16px_rgba(56,189,248,0.16),inset_0_0_12px_rgba(56,189,248,0.06)]"
+            : "border-l-[3px] border-l-transparent border-t border-r border-b border-transparent text-[#8ea2be] hover:text-white hover:bg-[#0c1a32]/60 hover:border-l-sky-400/40 active:bg-[#0c1a32]/80",
           className
         )}
         {...props}
       >
-        {/* Fixed 20px icon slot */}
-        <div className="w-[20px] h-[20px] flex items-center justify-center flex-shrink-0 transition-colors duration-[160ms]">
+        {/* Fixed 22px icon slot */}
+        <div className="w-[22px] h-[22px] flex items-center justify-center flex-shrink-0 transition-colors duration-[180ms]">
           {link.icon}
         </div>
         
